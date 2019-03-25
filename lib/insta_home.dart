@@ -41,9 +41,12 @@ class InstaHome extends StatelessWidget {
                     Icons.home,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+                    Navigator.push(context, PageRouteBuilder(
+                    pageBuilder: (context, anim1, anim2) => InstaHome(posts,myPosts),
+                    transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
+                    transitionDuration: Duration(seconds: 1)));
+                    },
+                    ),
                 IconButton(
                   iconSize: 35.0,
                   icon: Icon(
