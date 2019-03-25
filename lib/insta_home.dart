@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_insta_clone/insta_body.dart';
 
@@ -27,7 +28,7 @@ class InstaHome extends StatelessWidget {
         body: InstaBody(posts, myPosts),
         bottomNavigationBar: Container(
           color: Colors.white,
-          height: 83.0,
+          height: 53.0,
           alignment: Alignment.center,
           child: BottomAppBar(
             child: Row(
@@ -39,7 +40,12 @@ class InstaHome extends StatelessWidget {
                   icon: Icon(
                     Icons.home,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).push(
+  new CupertinoPageRoute<bool>(
+    fullscreenDialog: true,
+    builder: (context) => InstaHome(posts,myPosts)));
+                  },
                 ),
                 IconButton(
                   iconSize: 35.0,
