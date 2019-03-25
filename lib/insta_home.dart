@@ -41,10 +41,7 @@ class InstaHome extends StatelessWidget {
                     Icons.home,
                   ),
                   onPressed: () {
-                    Navigator.of(context, rootNavigator: true).push(
-  new CupertinoPageRoute<bool>(
-    fullscreenDialog: true,
-    builder: (context) => InstaHome(posts,myPosts)));
+                    Navigator.pop(context);
                   },
                 ),
                 IconButton(

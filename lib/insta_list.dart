@@ -92,6 +92,7 @@ class _InstaList extends State<InstaList> {
   Widget build(BuildContext context) {
     //var deviceSize = MediaQuery.of(context).size;
     return RefreshIndicator(
+      color: Colors.black,
       onRefresh: refreshList,
       key: refreshKey,
       child: ListView.builder(
@@ -230,6 +231,7 @@ class _InstaList extends State<InstaList> {
           },
         ));
   }
+
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   Future<Null> refreshList() async {
     refreshKey.currentState?.show(atTop: false);
