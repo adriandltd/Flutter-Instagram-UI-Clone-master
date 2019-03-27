@@ -1,4 +1,9 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_insta_clone/insta_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class InstaList extends StatefulWidget {
@@ -47,9 +52,9 @@ class _InstaList extends State<InstaList> {
   }
 
   likeButtonTriggerPost(index) {
-    if (posts[index]["liked"] == true)
-      posts[index]["liked"] = false;
-    else if (posts[index]["liked"] == false) posts[index]["liked"] = true;
+    var token = MyLoginPage().login();
+    var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$index/likes";
+    http.post(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
   }
 
   likeButtonCheck(index) {
