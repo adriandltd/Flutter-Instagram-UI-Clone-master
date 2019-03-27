@@ -28,7 +28,7 @@ class InstaHome extends StatelessWidget {
         body: InstaBody(posts, myPosts),
         bottomNavigationBar: Container(
           color: Colors.white,
-          height: 53.0,
+          height: 73.0,
           alignment: Alignment.center,
           child: BottomAppBar(
             child: Row(

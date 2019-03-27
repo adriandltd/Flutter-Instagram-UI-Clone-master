@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -55,13 +54,14 @@ class _InstaList extends State<InstaList> {
     var token = MyLoginPage().login();
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$index/likes";
     http.post(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    likeButtonCheck(index);
   }
 
   likeButtonCheck(index) {
     if (posts[index]["liked"] == false)
       return Icon(FontAwesomeIcons.heart);
     else
-      return Icon(FontAwesomeIcons.solidHeart);
+      return Icon(FontAwesomeIcons.solidHeart, color: Colors.red,);
   }
 
   checkNumLikes(index) {
