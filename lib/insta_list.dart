@@ -95,6 +95,13 @@ class _InstaList extends State<InstaList> {
       );
   }
 
+  postComment(index){
+
+
+
+  }
+
+
   checkNumLikes(index) {
     if (posts[index]["likes_count"] == 0)
       return " ";
@@ -152,7 +159,7 @@ class _InstaList extends State<InstaList> {
         key: refreshKey,
         child: ListView.builder(
           itemCount: posts.length,
-          itemBuilder: (BuildContext ctxt, int index) {
+          itemBuilder: (BuildContext context, int index) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -256,7 +263,7 @@ class _InstaList extends State<InstaList> {
                     child: GestureDetector(
                       onTap: (){
                         refreshData(context);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, myPosts)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, myPosts, index)));
                         },
                       child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
                     )),
