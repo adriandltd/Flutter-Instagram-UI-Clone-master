@@ -75,10 +75,11 @@ class _InstaList extends State<InstaList> {
     var allPosts = await MyLoginPage().getPosts(token);
     var allmyPosts = await MyLoginPage().getMyPosts(token);
 
-    Navigator.push(context, PageRouteBuilder(
-    pageBuilder: (context, anim1, anim2) => InstaHome(allPosts,allmyPosts),
-    transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
-    transitionDuration: Duration(seconds: 0)));
+    setState(() {
+      this.posts = allPosts;
+      this.myPosts = allmyPosts;
+      _InstaList(posts, myPosts).build(context);
+    });
   }
 
 
@@ -122,10 +123,6 @@ class _InstaList extends State<InstaList> {
   Future<Null> refreshList() async {
     refreshKey.currentState?.show(atTop: false);
     await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      _InstaList(posts,myPosts);
-    });
     refreshData(context);
 
     return null;
