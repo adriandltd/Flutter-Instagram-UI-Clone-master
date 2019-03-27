@@ -1,4 +1,3 @@
-import 'package:flutter_insta_clone/insta_home.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
@@ -70,7 +69,7 @@ class _InstaList extends State<InstaList> {
     }
   }
 
-  void refreshData(context) async {
+  refreshData(context) async {
     var token = await MyLoginPage().login();
     var allPosts = await MyLoginPage().getPosts(token);
     var allmyPosts = await MyLoginPage().getMyPosts(token);
@@ -124,7 +123,6 @@ class _InstaList extends State<InstaList> {
     refreshKey.currentState?.show(atTop: false);
     await Future.delayed(Duration(seconds: 2));
     refreshData(context);
-
     return null;
   }
 

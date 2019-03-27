@@ -1,11 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_insta_clone/insta_body.dart';
+import 'package:flutter_insta_clone/insta_login.dart';
 
 class InstaHome extends StatelessWidget {
   List<dynamic> posts;
   List<dynamic> myPosts;
   InstaHome(this.posts, this.myPosts);
+
+  refreshDataHome(context) async {
+    var token = await MyLoginPage().login();
+    var allPosts = await MyLoginPage().getPosts(token);
+    var allmyPosts = await MyLoginPage().getMyPosts(token);
+
+      this.posts = allPosts;
+      this.myPosts = allmyPosts;
+      Navigator.push(context, PageRouteBuilder(
+      pageBuilder: (context, anim1, anim2) => InstaHome(allPosts,allmyPosts),
+      transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
+      transitionDuration: Duration(seconds: 1)));
+  }
+
 
   final topBar = AppBar(
     backgroundColor: Color(0xfff8faf8),
@@ -41,10 +56,7 @@ class InstaHome extends StatelessWidget {
                     Icons.home,
                   ),
                   onPressed: () {
-                    Navigator.push(context, PageRouteBuilder(
-                    pageBuilder: (context, anim1, anim2) => InstaHome(posts,myPosts),
-                    transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
-                    transitionDuration: Duration(seconds: 1)));
+                    refreshDataHome(context);
                     },
                     ),
                 IconButton(
