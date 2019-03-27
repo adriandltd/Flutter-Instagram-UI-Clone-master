@@ -1,3 +1,4 @@
+import 'package:flutter_insta_clone/insta_comments.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
@@ -50,21 +51,22 @@ class _InstaList extends State<InstaList> {
     }
   }
 
-  Future <void> likeButtonTriggerPost(index,id) async {
-    if (posts[index]["liked"] == false)
-    {
+  Future<void> likeButtonTriggerPost(index, id) async {
+    if (posts[index]["liked"] == false) {
       var token = savedToken;
-      var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
+      var url =
+          "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
       print("liked post " + id.toString());
-      var request = await http.post(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+      var request = await http.post(url,
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
       print("Response status: ${request.statusCode}");
-    }
-    else
-    {
+    } else {
       var token = savedToken;
-      var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
+      var url =
+          "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
       print("unliked post " + id.toString());
-      var request = await http.delete(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+      var request = await http.delete(url,
+          headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
       print("Response status: ${request.statusCode}");
     }
   }
@@ -82,9 +84,15 @@ class _InstaList extends State<InstaList> {
 
   likeButtonCheck(index) {
     if (posts[index]["liked"] == false)
-      return Icon(FontAwesomeIcons.heart, color: Colors.black,);
+      return Icon(
+        FontAwesomeIcons.heart,
+        color: Colors.black,
+      );
     else
-      return Icon(FontAwesomeIcons.solidHeart, color: Colors.red,);
+      return Icon(
+        FontAwesomeIcons.solidHeart,
+        color: Colors.red,
+      );
   }
 
   checkNumLikes(index) {
@@ -94,6 +102,17 @@ class _InstaList extends State<InstaList> {
       return (posts[index]["likes_count"].toString() + " like");
     else
       return (posts[index]["likes_count"].toString() + " likes");
+  }
+
+  checkNumComments(index) {
+    if (posts[index]["comments_count"] == 0)
+      return " ";
+    else if (posts[index]["comments_count"] == 1)
+      return ("View " + posts[index]["comments_count"].toString() + " comment");
+    else
+      return ("View all " +
+          posts[index]["comments_count"].toString() +
+          " comments");
   }
 
   timeStamper(index) {
@@ -116,7 +135,7 @@ class _InstaList extends State<InstaList> {
   }
 
   var refreshKey = GlobalKey<RefreshIndicatorState>();
-  
+
   Future<Null> refreshList() async {
     refreshKey.currentState?.show(atTop: false);
     await Future.delayed(Duration(seconds: 2));
@@ -128,10 +147,10 @@ class _InstaList extends State<InstaList> {
   Widget build(BuildContext context) {
     //var deviceSize = MediaQuery.of(context).size;
     return RefreshIndicator(
-      color: Colors.black,
-      onRefresh: refreshList,
-      key: refreshKey,
-      child: ListView.builder(
+        color: Colors.black,
+        onRefresh: refreshList,
+        key: refreshKey,
+        child: ListView.builder(
           itemCount: posts.length,
           itemBuilder: (BuildContext ctxt, int index) {
             return Column(
@@ -183,11 +202,11 @@ class _InstaList extends State<InstaList> {
                         children: <Widget>[
                           IconButton(
                               icon: likeButtonCheck(index),
-                              onPressed: (){
-                                  var id = posts[index]["id"];
-                                  likeButtonTriggerPost(index,id);
-                                  refreshData(context);
-                                }),
+                              onPressed: () {
+                                var id = posts[index]["id"];
+                                likeButtonTriggerPost(index, id);
+                                refreshData(context);
+                              }),
                           SizedBox(
                             width: 8.0,
                           ),
@@ -232,7 +251,17 @@ class _InstaList extends State<InstaList> {
                           TextSpan(text: posts[index]["caption"]),
                         ]))),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 0.0, 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 5),
+                    child: GestureDetector(
+                      onTap: (){
+                        refreshData(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, myPosts)));
+                        },
+                      child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
+                    )),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
