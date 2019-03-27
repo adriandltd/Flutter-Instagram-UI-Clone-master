@@ -176,9 +176,12 @@ class _InstaList extends State<InstaList> {
                         children: <Widget>[
                           IconButton(
                               icon: likeButtonCheck(index),
-                              onPressed: () async{
+                              onPressed: (){
                                   var id = posts[index]["id"];
                                   likeButtonTriggerPost(index,id);
+                                   setState(() {
+                                     _InstaList(posts, myPosts).refreshList();
+                                   });
                                 }),
                           SizedBox(
                             width: 8.0,
