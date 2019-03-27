@@ -7,6 +7,8 @@ import 'package:flutter_insta_clone/insta_home.dart';
 
 void main() => runApp(MyApp());
 
+var savedToken;
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,7 @@ class MyLoginPage extends StatelessWidget {
     var token = await login();
     var allPosts = await getPosts(token);
     var myPosts = await getMyPosts(token);
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => InstaHome(allPosts, myPosts)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => InstaHome(allPosts, myPosts)));
   }
 
   Future<String> login() async {
@@ -38,22 +39,21 @@ class MyLoginPage extends StatelessWidget {
     var url = "https://serene-beach-48273.herokuapp.com/api/login?username=$user&password=$pass";
     var response = await http.get(url);
     var token = jsonDecode(response.body)["token"];
+    savedToken = token;
     return token;
   }
 
   Future<List<dynamic>> getPosts(token) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts";
 
-    var response = await http
-        .get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     return jsonDecode(response.body);
   }
 
   Future<List<dynamic>> getMyPosts(token) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/my_posts";
 
-    var response = await http
-        .get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     return jsonDecode(response.body);
   }
 

@@ -50,16 +50,28 @@ class _InstaList extends State<InstaList> {
     }
   }
 
-  likeButtonTriggerPost(index) {
-    var token = MyLoginPage().login();
-    var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$index/likes";
-    http.post(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
-    likeButtonCheck(index);
+  Future <void> likeButtonTriggerPost(index,id) async {
+    if (posts[index]["liked"] == false)
+    {
+      var token = savedToken;
+      var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
+      print("liked post " + id.toString());
+      var request = await http.post(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+      print("Response status: ${request.statusCode}");
+    }
+    else
+    {
+      var token = savedToken;
+      var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
+      print("unliked post " + id.toString());
+      var request = await http.delete(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+      print("Response status: ${request.statusCode}");
+    }
   }
 
   likeButtonCheck(index) {
     if (posts[index]["liked"] == false)
-      return Icon(FontAwesomeIcons.heart);
+      return Icon(FontAwesomeIcons.heart, color: Colors.black,);
     else
       return Icon(FontAwesomeIcons.solidHeart, color: Colors.red,);
   }
@@ -90,6 +102,19 @@ class _InstaList extends State<InstaList> {
       if (difference.inDays <= 1) return inDays + " day ago";
       return inDays + " days ago";
     }
+  }
+
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+  
+  Future<Null> refreshList() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      _InstaList(posts,myPosts);
+    });
+
+    return null;
   }
 
   @override
@@ -151,7 +176,10 @@ class _InstaList extends State<InstaList> {
                         children: <Widget>[
                           IconButton(
                               icon: likeButtonCheck(index),
-                              onPressed: likeButtonTriggerPost(index)),
+                              onPressed: () async{
+                                  var id = posts[index]["id"];
+                                  likeButtonTriggerPost(index,id);
+                                }),
                           SizedBox(
                             width: 8.0,
                           ),
@@ -234,17 +262,5 @@ class _InstaList extends State<InstaList> {
             );
           },
         ));
-  }
-
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
-  Future<Null> refreshList() async {
-    refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      new InstaList(posts,myPosts);
-    });
-
-    return null;
   }
 }
