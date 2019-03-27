@@ -1,3 +1,4 @@
+import 'package:flutter_insta_clone/insta_home.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
@@ -69,6 +70,18 @@ class _InstaList extends State<InstaList> {
     }
   }
 
+  void refreshData(context) async {
+    var token = await MyLoginPage().login();
+    var allPosts = await MyLoginPage().getPosts(token);
+    var allmyPosts = await MyLoginPage().getMyPosts(token);
+
+    Navigator.push(context, PageRouteBuilder(
+    pageBuilder: (context, anim1, anim2) => InstaHome(allPosts,allmyPosts),
+    transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
+    transitionDuration: Duration(seconds: 0)));
+  }
+
+
   likeButtonCheck(index) {
     if (posts[index]["liked"] == false)
       return Icon(FontAwesomeIcons.heart, color: Colors.black,);
@@ -113,6 +126,7 @@ class _InstaList extends State<InstaList> {
     setState(() {
       _InstaList(posts,myPosts);
     });
+    refreshData(context);
 
     return null;
   }
@@ -179,9 +193,7 @@ class _InstaList extends State<InstaList> {
                               onPressed: (){
                                   var id = posts[index]["id"];
                                   likeButtonTriggerPost(index,id);
-                                   setState(() {
-                                     _InstaList(posts, myPosts).refreshList();
-                                   });
+                                  refreshData(context);
                                 }),
                           SizedBox(
                             width: 8.0,
