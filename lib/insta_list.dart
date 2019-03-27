@@ -70,9 +70,8 @@ class _InstaList extends State<InstaList> {
   }
 
   refreshData(context) async {
-    var token = savedToken;
-    var newPosts = await MyLoginPage().getPosts(token);
-    var newmyPosts = await MyLoginPage().getMyPosts(token);
+    var newPosts = await MyLoginPage().getPosts(savedToken);
+    var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
 
     setState(() {
       this.posts = newPosts;

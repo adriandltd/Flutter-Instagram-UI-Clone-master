@@ -9,10 +9,9 @@ class InstaHome extends StatelessWidget {
   InstaHome(this.posts, this.myPosts);
 
   refreshDataHome(context) async {
-    var token = await MyLoginPage().login();
-    var allPosts = await MyLoginPage().getPosts(token);
-    var allmyPosts = await MyLoginPage().getMyPosts(token);
-    
+    var allPosts = await MyLoginPage().getPosts(savedToken);
+    var allmyPosts = await MyLoginPage().getMyPosts(savedToken);
+
     this.posts = allPosts;
     this.myPosts = allmyPosts;
     Navigator.push(context, PageRouteBuilder(
