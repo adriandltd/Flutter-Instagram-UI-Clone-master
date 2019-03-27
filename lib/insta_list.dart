@@ -70,17 +70,16 @@ class _InstaList extends State<InstaList> {
   }
 
   refreshData(context) async {
-    var token = await MyLoginPage().login();
-    var allPosts = await MyLoginPage().getPosts(token);
-    var allmyPosts = await MyLoginPage().getMyPosts(token);
+    var token = savedToken;
+    var newPosts = await MyLoginPage().getPosts(token);
+    var newmyPosts = await MyLoginPage().getMyPosts(token);
 
     setState(() {
-      this.posts = allPosts;
-      this.myPosts = allmyPosts;
-      _InstaList(posts, myPosts).build(context);
+      this.posts = newPosts;
+      this.myPosts = newmyPosts;
+      _InstaList(this.posts, this.myPosts).build(context);
     });
   }
-
 
   likeButtonCheck(index) {
     if (posts[index]["liked"] == false)

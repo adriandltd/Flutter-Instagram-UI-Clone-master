@@ -12,13 +12,13 @@ class InstaHome extends StatelessWidget {
     var token = await MyLoginPage().login();
     var allPosts = await MyLoginPage().getPosts(token);
     var allmyPosts = await MyLoginPage().getMyPosts(token);
-
-      this.posts = allPosts;
-      this.myPosts = allmyPosts;
-      Navigator.push(context, PageRouteBuilder(
-      pageBuilder: (context, anim1, anim2) => InstaHome(allPosts,allmyPosts),
-      transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
-      transitionDuration: Duration(seconds: 1)));
+    
+    this.posts = allPosts;
+    this.myPosts = allmyPosts;
+    Navigator.push(context, PageRouteBuilder(
+    pageBuilder: (context, anim1, anim2) => InstaHome(allPosts,allmyPosts),
+    transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
+    transitionDuration: Duration(seconds: 1)));
   }
 
 
