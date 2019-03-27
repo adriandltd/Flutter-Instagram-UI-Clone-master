@@ -223,8 +223,9 @@ class _InstaList extends State<InstaList> {
                           SizedBox(
                             width: 16.0,
                           ),
-                          Icon(
-                            FontAwesomeIcons.paperPlane,
+                          IconButton(
+                          onPressed: (){InstaComments(posts,myPosts,index).getCommentsList(index, 8);},
+                          icon: Icon(FontAwesomeIcons.paperPlane,),
                           )
                         ],
                       ),
