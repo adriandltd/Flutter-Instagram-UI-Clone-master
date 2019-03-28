@@ -10,26 +10,22 @@ class InstaComments extends StatelessWidget {
   List<dynamic> posts;
   List<dynamic> myPosts;
   int postindex;
-  var commentsList;
-  String comment;
-  InstaComments(this.posts, this.myPosts, this.postindex);
+  List<dynamic> commentsList;
+  int postsCount;
+  int commentsCount;
+  InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
 
 
-  Future<List<dynamic>>getCommentsList(postindex,commentindex) async {
+  Future<void>getCommentsList(postindex,commentindex) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postindex/comments";
-
     var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
-    print(response.body);
+    commentsList = await jsonDecode(response.body);
     print(commentsList);
-    comment = jsonDecode(response.body)[commentindex]["text"];
-    return jsonDecode(response.body);
   }
 
-  getComments(postindex,commentindex) async{
-    commentsList = await getCommentsList(postindex, commentindex);
-    return comment;
+  String getComment(){
+    return "comment";
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +49,9 @@ class InstaComments extends StatelessWidget {
           ],
         ),
         body: ListView.builder(
-          itemCount: posts[postindex]["comments_count"],
+          itemCount: commentsCount = posts[postindex]["comments_count"],
           itemBuilder: (BuildContext context, int commentindex) {
+            getCommentsList((postindex+(postsCount-(postindex * 2))), commentindex);
             return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -75,11 +72,8 @@ class InstaComments extends StatelessWidget {
                                         color: Colors.black,
                                       ),
                                       children: <TextSpan>[
-                                    TextSpan(
-                                        text: "",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    TextSpan(text: ""),
+                                    TextSpan(text: "",style: TextStyle(fontWeight: FontWeight.bold)),
+                                    TextSpan(text: getComment(),)
                                   ]))),
                         ],
                       ))

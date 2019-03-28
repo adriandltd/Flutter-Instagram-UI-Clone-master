@@ -17,6 +17,8 @@ class InstaList extends StatefulWidget {
 class _InstaList extends State<InstaList> {
   List<dynamic> posts;
   List<dynamic> myPosts;
+
+  int postsCount;
   _InstaList(this.posts, this.myPosts);
 
   checkValidImage(index) {
@@ -158,7 +160,7 @@ class _InstaList extends State<InstaList> {
         onRefresh: refreshList,
         key: refreshKey,
         child: ListView.builder(
-          itemCount: posts.length,
+          itemCount: postsCount = posts.length,
           itemBuilder: (BuildContext context, int index) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -224,7 +226,9 @@ class _InstaList extends State<InstaList> {
                             width: 16.0,
                           ),
                           IconButton(
-                          onPressed: (){InstaComments(posts,myPosts,index).getCommentsList(index, 8);},
+                          onPressed: (){
+
+                          },
                           icon: Icon(FontAwesomeIcons.paperPlane,),
                           )
                         ],
@@ -264,7 +268,7 @@ class _InstaList extends State<InstaList> {
                     child: GestureDetector(
                       onTap: (){
                         refreshData(context);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, myPosts, index)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, myPosts, index, postsCount)));
                         },
                       child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
                     )),
