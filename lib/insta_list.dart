@@ -1,10 +1,12 @@
 import 'package:flutter_insta_clone/insta_comments.dart';
+import 'package:flutter_insta_clone/insta_userProfile.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:convert';
 
 class InstaList extends StatefulWidget {
   List<dynamic> posts;
@@ -17,6 +19,7 @@ class InstaList extends StatefulWidget {
 class _InstaList extends State<InstaList> {
   List<dynamic> posts;
   List<dynamic> myPosts;
+  List<dynamic> userPosts;
 
   int postsCount;
   _InstaList(this.posts, this.myPosts);
@@ -71,6 +74,16 @@ class _InstaList extends State<InstaList> {
           headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
       print("Response status: ${request.statusCode}");
     }
+  }
+
+  Future<List<dynamic>> getUserPosts(index,id) async {
+    var token = savedToken;
+    var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$id/posts";
+
+    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    print("Response status: ${response.statusCode}");
+    print(jsonDecode(response.body).length);
+    return jsonDecode(response.body);
   }
 
   refreshData(context) async {
@@ -187,10 +200,37 @@ class _InstaList extends State<InstaList> {
                           SizedBox(
                             width: 10.0,
                           ),
-                          Text(
+                          InkWell(child: Text(
                             posts[index]["user_email"],
                             style: TextStyle(fontWeight: FontWeight.bold),
-                          )
+                            
+                          ),onTap: () {
+                            //this is the video I was looking at: https://www.youtube.com/watch?v=EwHMSxSWIvQ
+                            var id = posts[index]["id"];
+                            FutureBuilder(
+                              future: getUserPosts(index, id),
+                              builder: (BuildContext context, AsyncSnapshot snapshot){
+                                if(snapshot.data == null)
+                                {
+                                  return Container(
+                                    child: Center(
+                                      child: Text("Loading...")
+                                    ),
+                                  );
+                                }
+                                else{
+                                return ListView.builder(
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (BuildContext context, int index)
+                                  {
+                                    return ListTile(
+                                      title: Text(snapshot.data[index]["title"]),
+                                    );
+                                  },
+                                );                                }
+                              },
+                            );
+                          },),
                         ],
                       ),
                       IconButton(
