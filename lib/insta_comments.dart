@@ -6,26 +6,34 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
-class InstaComments extends StatelessWidget {
+class InstaComments extends StatefulWidget {
+  List<dynamic> posts;
+  List<dynamic> myPosts;
+  int postindex;
+  int postsCount;
+  InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
+  @override
+  _InstaComments createState() => new _InstaComments(this.posts, this.myPosts, this.postindex, this.postsCount);
+}
+
+class _InstaComments extends State<InstaComments> {
   List<dynamic> posts;
   List<dynamic> myPosts;
   int postindex;
   List<dynamic> commentsList;
   int postsCount;
   int commentsCount;
-  InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
+  String comment;
+  _InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
 
-
-  Future<void>getCommentsList(postindex,commentindex) async {
+  getComments(postindex,commentindex) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postindex/comments";
     var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
-    commentsList = await jsonDecode(response.body);
-    print(commentsList);
+    print(jsonDecode(response.body)[commentindex]["text"]);
+    commentsList = jsonDecode(response.body);
   }
 
-  String getComment(){
-    return "comment";
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +59,9 @@ class InstaComments extends StatelessWidget {
         body: ListView.builder(
           itemCount: commentsCount = posts[postindex]["comments_count"],
           itemBuilder: (BuildContext context, int commentindex) {
-            getCommentsList((postindex+(postsCount-(postindex * 2))), commentindex);
+            getComments((postindex+(postsCount-(postindex * 2))), commentindex);
+            //commentsList.add(comment);
+            //getCommentsList((postindex+(postsCount-(postindex * 2))), commentindex);
             return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -73,7 +83,7 @@ class InstaComments extends StatelessWidget {
                                       ),
                                       children: <TextSpan>[
                                     TextSpan(text: "",style: TextStyle(fontWeight: FontWeight.bold)),
-                                    TextSpan(text: getComment(),)
+                                    TextSpan(text: commentsList[commentindex]["text"])//getComments((postindex+(postsCount-(postindex * 2))), commentindex)),)
                                   ]))),
                         ],
                       ))
