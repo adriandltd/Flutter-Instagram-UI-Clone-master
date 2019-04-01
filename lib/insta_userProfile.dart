@@ -12,9 +12,7 @@ class InstaUserProfile extends StatefulWidget {
 class _InstaUserProfile extends State<InstaUserProfile> {
   List<dynamic> userPosts;
   _InstaUserProfile(this.userPosts);
-
   int postsCount;
-
 
   @override
   Widget build(BuildContext context) {

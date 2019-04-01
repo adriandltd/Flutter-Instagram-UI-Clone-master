@@ -30,7 +30,7 @@ class MyLoginPage extends StatelessWidget {
     var token = await login();
     var allPosts = await getPosts(token);
     var myPosts = await getMyPosts(token);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => InstaHome(allPosts, myPosts)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => InstaHome(allPosts)));
   }
 
   Future<String> login() async {

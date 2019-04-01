@@ -2,24 +2,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_insta_clone/insta_body.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
+import 'package:flutter_insta_clone/insta_userprofile.dart';
 
 class InstaHome extends StatelessWidget {
   List<dynamic> posts;
   List<dynamic> myPosts;
-  InstaHome(this.posts, this.myPosts);
+  InstaHome(this.posts);
 
   refreshDataHome(context) async {
     var newPosts = await MyLoginPage().getPosts(savedToken);
-    var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
 
     this.posts = newPosts;
-    this.myPosts = newmyPosts;
     Navigator.push(context, PageRouteBuilder(
-    pageBuilder: (context, anim1, anim2) => InstaHome(newPosts,newmyPosts),
+    pageBuilder: (context, anim1, anim2) => InstaHome(newPosts),
     transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
     transitionDuration: Duration(seconds: 1)));
   }
+  refreshDataProfile(context) async {
+    var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
 
+    this.myPosts = newmyPosts;
+    Navigator.push(context, PageRouteBuilder(
+    pageBuilder: (context, anim1, anim2) => InstaHome(newmyPosts),
+    transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
+    transitionDuration: Duration(seconds: 1)));
+  }
 
   final topBar = AppBar(
     backgroundColor: Color(0xfff8faf8),
@@ -39,7 +46,7 @@ class InstaHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: topBar,
-        body: InstaBody(posts, myPosts),
+        body: InstaBody(posts),
         bottomNavigationBar: Container(
           color: Colors.white,
           height: 73.0,
@@ -84,7 +91,9 @@ class InstaHome extends StatelessWidget {
                   icon: Icon(
                     Icons.account_box,
                   ),
-                  onPressed: null,
+                  onPressed: (){
+                    refreshDataProfile(context);
+                  }
                 ),
               ],
             ),

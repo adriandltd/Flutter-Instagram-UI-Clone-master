@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
+import 'dart:io';
+import 'package:dio/dio.dart';
 
 void main() => runApp(new MyApp());
 

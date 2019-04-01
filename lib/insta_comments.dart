@@ -20,20 +20,26 @@ class _InstaComments extends State<InstaComments> {
   List<dynamic> posts;
   List<dynamic> myPosts;
   int postindex;
-  List<dynamic> commentsList;
+  var commentsList;
   int postsCount;
   int commentsCount;
   String comment;
   _InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
 
-  getComments(postindex,commentindex) async {
-    var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postindex/comments";
-    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
-    print(jsonDecode(response.body)[commentindex]["text"]);
-    commentsList = jsonDecode(response.body);
+  @override
+  void initState() {
+    super.initState();
+      getComments((postindex+(postsCount-(postindex * 2))));
   }
 
-
+  getComments(postindex) async {
+    var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postindex/comments";
+    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
+    var _commentsList = jsonDecode(response.body);
+    setState(() {
+      commentsList = _commentsList;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,7 @@ class _InstaComments extends State<InstaComments> {
         body: ListView.builder(
           itemCount: commentsCount = posts[postindex]["comments_count"],
           itemBuilder: (BuildContext context, int commentindex) {
-            getComments((postindex+(postsCount-(postindex * 2))), commentindex);
+            getComments((postindex+(postsCount-(postindex * 2))));
             //commentsList.add(comment);
             //getCommentsList((postindex+(postsCount-(postindex * 2))), commentindex);
             return Column(
