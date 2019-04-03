@@ -307,7 +307,8 @@ class _InstaList extends State<InstaList> {
                     child: GestureDetector(
                       onTap: (){
                         refreshData(context);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, myPosts, index, postsCount)));
+                        var id = posts[index]["id"];
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, index, id)));
                         },
                       child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
                     )),

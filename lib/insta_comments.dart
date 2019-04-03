@@ -8,37 +8,35 @@ import 'dart:async';
 
 class InstaComments extends StatefulWidget {
   List<dynamic> posts;
-  List<dynamic> myPosts;
   int postindex;
-  int postsCount;
-  InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
+  int id;
+  InstaComments(this.posts, this.postindex,this.id);
   @override
-  _InstaComments createState() => new _InstaComments(this.posts, this.myPosts, this.postindex, this.postsCount);
+  _InstaComments createState() => new _InstaComments(this.posts,this.postindex, this.id);
 }
 
 class _InstaComments extends State<InstaComments> {
   List<dynamic> posts;
-  List<dynamic> myPosts;
   int postindex;
+  int id;
   var commentsList;
-  int postsCount;
   int commentsCount;
-  String comment;
-  _InstaComments(this.posts, this.myPosts, this.postindex,this.postsCount);
+  _InstaComments(this.posts, this.postindex, this.id);
 
   @override
   void initState() {
     super.initState();
-      getComments((postindex+(postsCount-(postindex * 2))));
+      getComments(id);
   }
 
-  getComments(postindex) async {
-    var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postindex/comments";
+  getComments(id) async {
+    var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/comments";
     var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
     var _commentsList = jsonDecode(response.body);
     setState(() {
       commentsList = _commentsList;
     });
+    print(commentsList.toString());
   }
 
   @override
@@ -65,9 +63,6 @@ class _InstaComments extends State<InstaComments> {
         body: ListView.builder(
           itemCount: commentsCount = posts[postindex]["comments_count"],
           itemBuilder: (BuildContext context, int commentindex) {
-            getComments((postindex+(postsCount-(postindex * 2))));
-            //commentsList.add(comment);
-            //getCommentsList((postindex+(postsCount-(postindex * 2))), commentindex);
             return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -88,7 +83,7 @@ class _InstaComments extends State<InstaComments> {
                                         color: Colors.black,
                                       ),
                                       children: <TextSpan>[
-                                    TextSpan(text: "",style: TextStyle(fontWeight: FontWeight.bold)),
+                                    TextSpan(text: commentsList[commentindex]["user"]["email"] + " ",style: TextStyle(fontWeight: FontWeight.bold)),
                                     TextSpan(text: commentsList[commentindex]["text"])//getComments((postindex+(postsCount-(postindex * 2))), commentindex)),)
                                   ]))),
                         ],
