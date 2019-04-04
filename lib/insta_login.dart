@@ -30,13 +30,15 @@ class MyLoginPage extends StatelessWidget {
     var token = await login();
     var allPosts = await getPosts(token);
     var myPosts = await getMyPosts(token);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => InstaHome(allPosts)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => InstaHome(allPosts, myPosts)));
   }
 
   Future<String> login() async {
     var user = userCtrl.text;
     var pass = passCtrl.text;
-    var url = "https://serene-beach-48273.herokuapp.com/api/login?username=$user&password=$pass";
+    var url =
+        "https://serene-beach-48273.herokuapp.com/api/login?username=$user&password=$pass";
     var response = await http.get(url);
     var token = jsonDecode(response.body)["token"];
     savedToken = token;
@@ -46,38 +48,65 @@ class MyLoginPage extends StatelessWidget {
   Future<List<dynamic>> getPosts(token) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/posts";
 
-    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    var response = await http
+        .get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     return jsonDecode(response.body);
   }
 
   Future<List<dynamic>> getMyPosts(token) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/my_posts";
 
-    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    var response = await http
+        .get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     return jsonDecode(response.body);
   }
 
   @override
   Widget build(BuildContext context) {
     var scaffold = Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Column(
             children: <Widget>[
               Padding(padding: const EdgeInsets.only(top: 205.0)),
-              SizedBox(height: 75.0, child: Image.asset("assets/images/insta_logo.png")),
+              SizedBox(
+                  height: 75.0,
+                  child: Image.asset("assets/images/insta_logo.png")),
               Padding(padding: const EdgeInsets.only(top: 20.0)),
-              Container(width: 325,child: TextField(controller: userCtrl, decoration: InputDecoration(hintText: "Email", contentPadding: EdgeInsets.all(15), border: OutlineInputBorder(), focusedBorder: OutlineInputBorder()), textCapitalization: TextCapitalization.none, autocorrect: false,)),
+              Container(
+                  width: 325,
+                  child: TextField(
+                    controller: userCtrl,
+                    decoration: InputDecoration(
+                        hintText: "Email",
+                        contentPadding: EdgeInsets.all(15),
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder()),
+                    textCapitalization: TextCapitalization.none,
+                    autocorrect: false,
+                  )),
               Padding(padding: const EdgeInsets.only(top: 15.0)),
-              Container(width: 325,child: TextField(controller: passCtrl, obscureText: true, decoration: InputDecoration(hintText: "Password", contentPadding: EdgeInsets.all(15), border: OutlineInputBorder(), focusedBorder: OutlineInputBorder()))),
+              Container(
+                  width: 325,
+                  child: TextField(
+                      keyboardType: TextInputType.number,
+                      controller: passCtrl,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          hintText: "Password",
+                          contentPadding: EdgeInsets.all(15),
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder()))),
               Padding(padding: const EdgeInsets.only(top: 18.0)),
               ButtonTheme(
                   minWidth: 325.0,
                   height: 50.0,
                   child: RaisedButton(
                     color: Colors.blue,
-                    child: Text("Log In", style: TextStyle(color: Colors.white)),
+                    child:
+                        Text("Log In", style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       loginStuff(context);
                     },

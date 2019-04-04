@@ -2,31 +2,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_insta_clone/insta_body.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
-import 'package:flutter_insta_clone/insta_userprofile.dart';
+import 'package:flutter_insta_clone/insta_myProfile.dart';
+import 'package:flutter_insta_clone/insta_newPost.dart';
 
 class InstaHome extends StatelessWidget {
   List<dynamic> posts;
   List<dynamic> myPosts;
-  InstaHome(this.posts);
+  InstaHome(this.posts, this.myPosts);
 
   refreshDataHome(context) async {
     var newPosts = await MyLoginPage().getPosts(savedToken);
+    var newMyPosts = await MyLoginPage().getPosts(savedToken);
+
 
     this.posts = newPosts;
+    this.myPosts = newMyPosts;
     Navigator.push(context, PageRouteBuilder(
-    pageBuilder: (context, anim1, anim2) => InstaHome(newPosts),
+    pageBuilder: (context, anim1, anim2) => InstaHome(newPosts,newMyPosts),
     transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
     transitionDuration: Duration(seconds: 1)));
   }
   refreshDataProfile(context) async {
-    var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
+    var newPosts = await MyLoginPage().getPosts(savedToken);
+    var newMyPosts = await MyLoginPage().getMyPosts(savedToken);
 
-    this.myPosts = newmyPosts;
+    this.posts = newPosts;
+    this.myPosts = newMyPosts;
     Navigator.push(context, PageRouteBuilder(
-    pageBuilder: (context, anim1, anim2) => InstaHome(newmyPosts),
+    pageBuilder: (context, anim1, anim2) => InstaHome(newPosts,newMyPosts),
     transitionsBuilder: (context, anim1, anim2, child) => Container(child: child),
     transitionDuration: Duration(seconds: 1)));
   }
+
 
   final topBar = AppBar(
     backgroundColor: Color(0xfff8faf8),
@@ -77,7 +84,10 @@ class InstaHome extends StatelessWidget {
                   icon: Icon(
                     Icons.add_box,
                   ),
-                  onPressed: null,
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => InstaNewPost()));
+
+                  },
                 ),
                 IconButton(
                   iconSize: 35.0,
@@ -92,7 +102,10 @@ class InstaHome extends StatelessWidget {
                     Icons.account_box,
                   ),
                   onPressed: (){
-                    refreshDataProfile(context);
+                  //  refreshDataProfile(context);
+                   // InstaMyProfile().getData(savedToken);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => InstaMyProfile(myPosts)));
+
                   }
                 ),
               ],

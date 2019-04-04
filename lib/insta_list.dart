@@ -144,14 +144,14 @@ class _InstaList extends State<InstaList> {
     String inMin = difference.inMinutes.toString();
     String inDays = difference.inDays.toString();
     if (difference.inMinutes < 60) {
-      if (difference.inMinutes <= 1) return inMin + " minute ago";
-      return inMin + " minutes ago";
+      if (difference.inMinutes <= 1) return inMin + " MINUTE AGO";
+      return inMin + " MINUTES AGO";
     } else if (difference.inHours < 24) {
       if (difference.inHours <= 1) return inHours + " hour ago";
-      return inHours + " hours ago";
+      return inHours + " HOURS AGO";
     } else {
-      if (difference.inDays <= 1) return inDays + " day ago";
-      return inDays + " days ago";
+      if (difference.inDays <= 1) return inDays + " DAY AGO";
+      return inDays + " DAYS AGO";
     }
   }
 
@@ -206,29 +206,6 @@ class _InstaList extends State<InstaList> {
                           ),onTap: () {
                             //this is the video I was looking at: https://www.youtube.com/watch?v=EwHMSxSWIvQ
                             var id = posts[index]["id"];
-                            FutureBuilder(
-                              future: getUserPosts(index, id),
-                              builder: (BuildContext context, AsyncSnapshot snapshot){
-                                if(snapshot.data == null)
-                                {
-                                  return Container(
-                                    child: Center(
-                                      child: Text("Loading...")
-                                    ),
-                                  );
-                                }
-                                else{
-                                return ListView.builder(
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index)
-                                  {
-                                    return ListTile(
-                                      title: Text(snapshot.data[index]["title"]),
-                                    );
-                                  },
-                                );                                }
-                              },
-                            );
                           },),
                         ],
                       ),
@@ -255,21 +232,24 @@ class _InstaList extends State<InstaList> {
                                 likeButtonTriggerPost(index, id);
                                 refreshData(context);
                               }),
-                          SizedBox(
-                            width: 8.0,
+                          Padding(
+                            padding: const EdgeInsets.only(),
+                            child: IconButton(
+                              icon: Icon(FontAwesomeIcons.commentDots),
+                              onPressed: ()
+                              {
+                                refreshData(context);
+                                var id = posts[index]["id"];
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, index, id)));
+                              },
+                            ),
                           ),
-                          Icon(
-                            FontAwesomeIcons.comment,
-                          ),
-                          SizedBox(
-                            width: 16.0,
-                          ),
-                          IconButton(
-                          onPressed: (){
+                          // IconButton(
+                          // onPressed: (){
 
-                          },
-                          icon: Icon(FontAwesomeIcons.paperPlane,),
-                          )
+                          // },
+                          // icon: Icon(FontAwesomeIcons.paperPlane),
+                          // )
                         ],
                       ),
                       Padding(
@@ -298,12 +278,11 @@ class _InstaList extends State<InstaList> {
                             children: <TextSpan>[
                           TextSpan(
                               text: posts[index]["user_email"] + " ",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(text: posts[index]["caption"]),
+                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                          TextSpan(text: posts[index]["caption"],style: TextStyle(fontSize:14)),
                         ]))),
                 Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 5),
+                    padding: const EdgeInsets.only(top: 10,bottom:5, left: 16),
                     child: GestureDetector(
                       onTap: (){
                         refreshData(context);
@@ -312,41 +291,15 @@ class _InstaList extends State<InstaList> {
                         },
                       child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
                     )),
+              
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        height: 40.0,
-                        width: 40.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: checkValidCurrentProfileImage(index)),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Add a comment...",
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
                   child: Text(timeStamper(index),
-                      style: TextStyle(color: Colors.grey)),
+                      style: TextStyle(color: Colors.grey, fontSize: 11)),
                 ),
-                Padding(padding: const EdgeInsets.symmetric(vertical: 5.0))
+                Padding(padding: const EdgeInsets.symmetric(vertical: 10.0)),
+                Divider(height: 2.0, indent: 1,),
+
               ],
             );
           },
