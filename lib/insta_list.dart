@@ -21,13 +21,15 @@ class _InstaList extends State<InstaList> {
   List<dynamic> myPosts;
   List<dynamic> userPosts;
   int postsCount;
+
   _InstaList(this.posts);
 
   checkValidImage(index) {
     try {
-      return Image.network(posts[index]["image_url"]);
+      var response = ((posts[index]["image_url"]).toString());
+      return response;
     } catch (e) {
-      return Image.asset('assets/images/empty-photo.jpg');
+      return (Image.asset('assets/images/empty-photo.jpg'));
     }
   }
 
@@ -147,7 +149,7 @@ class _InstaList extends State<InstaList> {
       if (difference.inMinutes <= 1) return inMin + " MINUTE AGO";
       return inMin + " MINUTES AGO";
     } else if (difference.inHours < 24) {
-      if (difference.inHours <= 1) return inHours + " hour ago";
+      if (difference.inHours <= 1) return inHours + " HOUR AGO";
       return inHours + " HOURS AGO";
     } else {
       if (difference.inDays <= 1) return inDays + " DAY AGO";
@@ -199,14 +201,17 @@ class _InstaList extends State<InstaList> {
                           SizedBox(
                             width: 10.0,
                           ),
-                          InkWell(child: Text(
+                          InkWell(
+                            child: Text(
                             posts[index]["user_email"],
                             style: TextStyle(fontWeight: FontWeight.bold),
                             
+                            
                           ),onTap: () {
-                            //this is the video I was looking at: https://www.youtube.com/watch?v=EwHMSxSWIvQ
-                            var id = posts[index]["id"];
-                          },),
+                            var id = posts[index]["user_id"];
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => InstaUserProfile(id)));
+                          },
+                          ),
                         ],
                       ),
                       IconButton(
@@ -216,7 +221,7 @@ class _InstaList extends State<InstaList> {
                     ],
                   ),
                 ),
-                Flexible(fit: FlexFit.loose, child: checkValidImage(index)),
+                Image.network(checkValidImage(index), fit: BoxFit.cover, height: 400, width: 450,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5.25),
                   child: Row(

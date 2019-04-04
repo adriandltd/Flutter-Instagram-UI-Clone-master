@@ -1,69 +1,117 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_insta_clone/insta_login.dart';
+import 'package:flutter_insta_clone/insta_home.dart';
+import 'package:flutter_insta_clone/insta_list.dart';
+import 'package:flutter_insta_clone/insta_comments.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+
+
 
 class InstaUserProfile extends StatefulWidget {
-  List<dynamic> userPosts;
+  int userid;
+  Map<String, dynamic> userAccount;
+  InstaUserProfile(this.userid);
 
-  InstaUserProfile(this.userPosts);
-  @override
-  _InstaUserProfile createState() => new _InstaUserProfile(this.userPosts);
+  _InstaUserProfile createState() => new _InstaUserProfile(this.userid);
 }
 
 class _InstaUserProfile extends State<InstaUserProfile> {
-  List<dynamic> userPosts;
-  _InstaUserProfile(this.userPosts);
+  int userid;
+  Map<String, dynamic> userAccount;
+  _InstaUserProfile(this.userid);
+
   int postsCount;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserAccount(context);
+  }
+
+  Future<Map<String, dynamic>> getUserAccount(token) async {
+    var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid";
+
+    var response = await http.get(url,
+        headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
+    var _userAccount = jsonDecode(response.body);
+    setState(() {
+      userAccount = _userAccount;
+    });
+    print("Response status: ${response.statusCode}");
+    return jsonDecode(response.body);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xfff8faf8),
-          centerTitle: true,
-          elevation: 1.0,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
-          title: Text("Profile", textAlign: TextAlign.left),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Icon(Icons.send),
-            )
-          ],
+      appBar: AppBar(
+        title: Text(
+          userAccount["email"],
+          style: const TextStyle(color: Colors.black),
         ),
-        body: ListView.builder(
-          itemCount: userPosts.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 7.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        backgroundColor: Colors.white,
+      ),
+      body: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 40.0,
+                      backgroundColor: Colors.grey,
+                      backgroundImage:
+                          NetworkImage(userAccount["profile_image_url"]),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
                         children: <Widget>[
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: RichText(
-                                  text: TextSpan(
-                                      style: TextStyle(
-                                        fontSize: 10.0,
-                                        color: Colors.black,
-                                      ),
-                                      children: <TextSpan>[
-                                    TextSpan(text: userPosts[index]["caption"])
-                                  ]))),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              
+                            ],
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                //  buildProfileFollowButton(user)
+                              ]),
                         ],
-                      ))
-                ]);
-          },
-        ));
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: Text(
+                      userAccount["email"],
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(top: 1.0),
+                  child: Text(userAccount["bio"]),
+                ),
+              ],
+            ),
+          ),
+          Divider(),
+          Divider(height: 0.0),
+        ],
+      ),
+    );
   }
 }
