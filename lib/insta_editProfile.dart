@@ -10,24 +10,36 @@ import 'dart:async';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
 
-class InstaNewPost extends StatefulWidget {
-  InstaNewPost();
+class InstaEditProfile extends StatefulWidget {
+  InstaEditProfile();
 
-  _InstaNewPost createState() => new _InstaNewPost();
+  _InstaEditProfile createState() => new _InstaEditProfile();
 }
 
-class _InstaNewPost extends State<InstaNewPost> {
-  var captionCtrl = TextEditingController();
-  File _image;
+class _InstaEditProfile extends State<InstaEditProfile> {
+  var bioCtrl = TextEditingController();
+ File _image;
 
-  Future<Response> upload(TextEditingController caption) async {
+  Future<Response> upload(TextEditingController bio) async {
     FormData formData = new FormData.from(
         {
-        "caption": caption.text, 
-        "image": new UploadFileInfo(_image, _image.path)
+        "bio": bio.text, 
         });
-    var response = await Dio().post(
-      "http://serene-beach-48273.herokuapp.com/api/v1/posts",
+    var response = await Dio().patch("http://serene-beach-48273.herokuapp.com/api/v1/my_account?$bio",
+      data: formData,
+      options: Options(
+        headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"},
+      ),
+    );
+    return response;
+  }
+
+   Future<Response> uploadImage() async {
+    FormData formData = new FormData.from(
+        {
+          "image": new UploadFileInfo(_image, _image.path)
+        });
+    var response = await Dio().patch("http://serene-beach-48273.herokuapp.com/api/v1/my_account/profile_image",
       data: formData,
       options: Options(
         headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"},
@@ -40,7 +52,7 @@ class _InstaNewPost extends State<InstaNewPost> {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = image;
+    _image = image;
     });
   }
 
@@ -57,7 +69,7 @@ class _InstaNewPost extends State<InstaNewPost> {
           },
           icon: Icon(Icons.arrow_back),
         ),
-        title: Text("Create a Post", textAlign: TextAlign.left),
+        title: Text("Edit Profile", textAlign: TextAlign.left),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
@@ -72,7 +84,7 @@ class _InstaNewPost extends State<InstaNewPost> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                  "Please select your image:"),
+                  "Please select your new Profile image:"),
             ],
           ),
           Padding(padding: EdgeInsets.all(10),),
@@ -87,12 +99,26 @@ class _InstaNewPost extends State<InstaNewPost> {
                 },
               ),
             ],
+          ),          
+          Row(            
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(border: Border.all()),
+                child: MaterialButton(
+                  child: Text("Update Profile Picture"),
+                  onPressed: () {
+                    uploadImage();
+                  },
+                ),
+              ),
+            ],
           ),
           Padding(padding: EdgeInsets.only(top:30, bottom:30),),              
           Row(            
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Please type a caption below:"),
+              Text("Please type a bio below:"),
             ],
           ),          
           Padding(padding: EdgeInsets.all(5),),              
@@ -102,9 +128,9 @@ class _InstaNewPost extends State<InstaNewPost> {
               Container(
                   width: 325,
                   child: TextField(
-                    controller: captionCtrl,
+                    controller: bioCtrl,
                     decoration: InputDecoration(
-                        hintText: "Caption",
+                        hintText: "Bio",
                         contentPadding: EdgeInsets.all(15),
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder()),
@@ -120,9 +146,9 @@ class _InstaNewPost extends State<InstaNewPost> {
               Container(
                 decoration: BoxDecoration(border: Border.all()),
                 child: MaterialButton(
-                  child: Text("Post"),
+                  child: Text("Update Bio"),
                   onPressed: () {
-                    upload(captionCtrl);
+                    upload(bioCtrl);
                   },
                 ),
               ),

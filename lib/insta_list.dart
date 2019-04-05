@@ -77,11 +77,12 @@ class _InstaList extends State<InstaList> {
     }
   }
 
-  Future<List<dynamic>> getUserPosts(index,id) async {
+  Future<List<dynamic>> getUserPosts(index, id) async {
     var token = savedToken;
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$id/posts";
 
-    var response = await http.get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
+    var response = await http
+        .get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     print("Response status: ${response.statusCode}");
     print(jsonDecode(response.body).length);
     return jsonDecode(response.body);
@@ -111,12 +112,7 @@ class _InstaList extends State<InstaList> {
       );
   }
 
-  postComment(index){
-
-
-
-  }
-
+  postComment(index) {}
 
   checkNumLikes(index) {
     if (posts[index]["likes_count"] == 0)
@@ -203,14 +199,17 @@ class _InstaList extends State<InstaList> {
                           ),
                           InkWell(
                             child: Text(
-                            posts[index]["user_email"],
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                            
-                            
-                          ),onTap: () {
-                            var id = posts[index]["user_id"];
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => InstaUserProfile(id)));
-                          },
+                              posts[index]["user_email"],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () {
+                              var id = posts[index]["user_id"];
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          InstaUserProfile(id)));
+                            },
                           ),
                         ],
                       ),
@@ -221,7 +220,19 @@ class _InstaList extends State<InstaList> {
                     ],
                   ),
                 ),
-                Image.network(checkValidImage(index), fit: BoxFit.cover, height: 400, width: 450,),
+                InkWell(
+                    onDoubleTap: () {
+                      var id = posts[index]["id"];
+                      likeButtonTriggerPost(index, id);
+                      refreshData(context);
+                    },
+                    //enableFeedback: true,
+                    child: Image.network(
+                      checkValidImage(index),
+                      fit: BoxFit.cover,
+                      height: 400,
+                      width: 450,
+                    )),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5.25),
                   child: Row(
@@ -241,11 +252,14 @@ class _InstaList extends State<InstaList> {
                             padding: const EdgeInsets.only(),
                             child: IconButton(
                               icon: Icon(FontAwesomeIcons.commentDots),
-                              onPressed: ()
-                              {
+                              onPressed: () {
                                 refreshData(context);
                                 var id = posts[index]["id"];
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, index, id)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            InstaComments(posts, index, id)));
                               },
                             ),
                           ),
@@ -283,28 +297,38 @@ class _InstaList extends State<InstaList> {
                             children: <TextSpan>[
                           TextSpan(
                               text: posts[index]["user_email"] + " ",
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                          TextSpan(text: posts[index]["caption"],style: TextStyle(fontSize:14)),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 14)),
+                          TextSpan(
+                              text: posts[index]["caption"],
+                              style: TextStyle(fontSize: 14)),
                         ]))),
                 Padding(
-                    padding: const EdgeInsets.only(top: 10,bottom:5, left: 16),
+                    padding:
+                        const EdgeInsets.only(top: 10, bottom: 5, left: 16),
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         refreshData(context);
                         var id = posts[index]["id"];
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(posts, index, id)));
-                        },
-                      child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    InstaComments(posts, index, id)));
+                      },
+                      child: Text(checkNumComments(index),
+                          style: TextStyle(color: Colors.grey, fontSize: 14)),
                     )),
-              
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18.0),
                   child: Text(timeStamper(index),
                       style: TextStyle(color: Colors.grey, fontSize: 11)),
                 ),
                 Padding(padding: const EdgeInsets.symmetric(vertical: 10.0)),
-                Divider(height: 2.0, indent: 1,),
-
+                Divider(
+                  height: 2.0,
+                  indent: 1,
+                ),
               ],
             );
           },

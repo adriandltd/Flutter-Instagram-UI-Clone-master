@@ -9,10 +9,8 @@ import 'package:flutter_insta_clone/insta_login.dart';
 import 'package:flutter_insta_clone/insta_home.dart';
 import 'package:flutter_insta_clone/insta_list.dart';
 import 'package:flutter_insta_clone/insta_comments.dart';
+import 'package:flutter_insta_clone/insta_editprofile.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-
-
 
 class InstaMyProfile extends StatefulWidget {
   List<dynamic> myPosts;
@@ -64,7 +62,7 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     }
   }
 
-   checkValidImage(index) {
+  checkValidImage(index) {
     try {
       return Image.network(myPosts[index]["image_url"]);
     } catch (e) {
@@ -78,7 +76,7 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     } catch (e) {
       return AssetImage('assets/images/empty-profile.png');
     }
-  }  
+  }
 
   likeButtonCheck(index) {
     if (myPosts[index]["liked"] == false)
@@ -113,7 +111,7 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     }
   }
 
-    checkNumLikes(index) {
+  checkNumLikes(index) {
     if (myPosts[index]["likes_count"] == 0)
       return " ";
     else if (myPosts[index]["likes_count"] == 1)
@@ -126,7 +124,9 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     if (myPosts[index]["comments_count"] == 0)
       return " ";
     else if (myPosts[index]["comments_count"] == 1)
-      return ("View " + myPosts[index]["comments_count"].toString() + " comment");
+      return ("View " +
+          myPosts[index]["comments_count"].toString() +
+          " comment");
     else
       return ("View all " +
           myPosts[index]["comments_count"].toString() +
@@ -151,7 +151,6 @@ class _InstaMyProfile extends State<InstaMyProfile> {
       return inDays + " days ago";
     }
   }
-
 
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
@@ -193,18 +192,32 @@ class _InstaMyProfile extends State<InstaMyProfile> {
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              
-                            ],
+                            children: <Widget>[],
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 //  buildProfileFollowButton(user)
                               ]),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(border: Border.all()),
+                                child: MaterialButton(
+                                  child: Text("Edit Profile"),
+                                  onPressed: ()
+                                  {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => InstaEditProfile()));
+
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
                 Container(
@@ -223,159 +236,159 @@ class _InstaMyProfile extends State<InstaMyProfile> {
             ),
           ),
           Divider(),
-        //   RefreshIndicator(
-        // color: Colors.black,
-        // onRefresh: refreshList,
-        // key: refreshKey,
-        // child: ListView.builder(
-        //   itemCount: postsCount = myPosts.length,
-        //   itemBuilder: (BuildContext context, int index) {
-        //     return Column(
-        //       mainAxisAlignment: MainAxisAlignment.start,
-        //       mainAxisSize: MainAxisSize.min,
-        //       crossAxisAlignment: CrossAxisAlignment.stretch,
-        //       children: <Widget>[
-        //         Padding(
-        //           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 7.0),
-        //           child: Row(
-        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //             children: <Widget>[
-        //               Row(
-        //                 children: <Widget>[
-        //                   Container(
-        //                     height: 40.0,
-        //                     width: 40.0,
-        //                     decoration: BoxDecoration(
-        //                       shape: BoxShape.circle,
-        //                       image: DecorationImage(
-        //                           fit: BoxFit.fill,
-        //                           image: checkValidProfileImage(index)),
-        //                     ),
-        //                   ),
-        //                   SizedBox(
-        //                     width: 10.0,
-        //                   ),
-        //                   InkWell(child: Text(
-        //                     myPosts[index]["user_email"],
-        //                     style: TextStyle(fontWeight: FontWeight.bold),
-                            
-        //                   ),onTap: () {
-        //                     //this is the video I was looking at: https://www.youtube.com/watch?v=EwHMSxSWIvQ
-        //                     var id = myPosts[index]["id"];
-        //                   },),
-        //                 ],
-        //               ),
-        //               IconButton(
-        //                 icon: Icon(Icons.more_vert),
-        //                 onPressed: null,
-        //               )
-        //             ],
-        //           ),
-        //         ),
-        //         Flexible(fit: FlexFit.loose, child: checkValidImage(index)),
-        //         Padding(
-        //           padding: const EdgeInsets.symmetric(horizontal: 5.25),
-        //           child: Row(
-        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //             children: <Widget>[
-        //               Row(
-        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //                 children: <Widget>[
-        //                   IconButton(
-        //                       icon: likeButtonCheck(index),
-        //                       onPressed: () {
-        //                         var id = myPosts[index]["id"];
-        //                         likeButtonTriggerPost(index, id);
-        //                         refreshData(context);
-        //                       }),
-        //                   SizedBox(
-        //                     width: 8.0,
-        //                   ),
-        //                   Icon(
-        //                     FontAwesomeIcons.comment,
-        //                   ),
-        //                   SizedBox(
-        //                     width: 16.0,
-        //                   ),
-        //                   IconButton(
-        //                   onPressed: (){
+          //   RefreshIndicator(
+          // color: Colors.black,
+          // onRefresh: refreshList,
+          // key: refreshKey,
+          // child: ListView.builder(
+          //   itemCount: postsCount = myPosts.length,
+          //   itemBuilder: (BuildContext context, int index) {
+          //     return Column(
+          //       mainAxisAlignment: MainAxisAlignment.start,
+          //       mainAxisSize: MainAxisSize.min,
+          //       crossAxisAlignment: CrossAxisAlignment.stretch,
+          //       children: <Widget>[
+          //         Padding(
+          //           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 7.0),
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             children: <Widget>[
+          //               Row(
+          //                 children: <Widget>[
+          //                   Container(
+          //                     height: 40.0,
+          //                     width: 40.0,
+          //                     decoration: BoxDecoration(
+          //                       shape: BoxShape.circle,
+          //                       image: DecorationImage(
+          //                           fit: BoxFit.fill,
+          //                           image: checkValidProfileImage(index)),
+          //                     ),
+          //                   ),
+          //                   SizedBox(
+          //                     width: 10.0,
+          //                   ),
+          //                   InkWell(child: Text(
+          //                     myPosts[index]["user_email"],
+          //                     style: TextStyle(fontWeight: FontWeight.bold),
 
-        //                   },
-        //                   icon: Icon(FontAwesomeIcons.paperPlane,),
-        //                   )
-        //                 ],
-        //               ),
-        //               Padding(
-        //                   padding: EdgeInsets.only(right: 8.0),
-        //                   child: Icon(FontAwesomeIcons.bookmark))
-        //             ],
-        //           ),
-        //         ),
-        //         Padding(
-        //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        //             child: Text(
-        //               checkNumLikes(index),
-        //               style: TextStyle(fontSize: 15.0),
-        //             )),
-        //         Padding(
-        //           padding: const EdgeInsets.symmetric(vertical: 3.0),
-        //         ),
-        //         Padding(
-        //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        //             child: RichText(
-        //                 text: TextSpan(
-        //                     style: TextStyle(
-        //                       fontSize: 15.0,
-        //                       color: Colors.black,
-        //                     ),
-        //                     children: <TextSpan>[
-        //                   TextSpan(
-        //                       text: myPosts[index]["user_email"] + " ",
-        //                       style: TextStyle(fontWeight: FontWeight.bold)),
-        //                   TextSpan(text: myPosts[index]["caption"]),
-        //                 ]))),
-        //         Padding(
-        //             padding: const EdgeInsets.symmetric(
-        //                 horizontal: 16.0, vertical: 5),
-        //             child: GestureDetector(
-        //               onTap: (){
-        //                 refreshData(context);
-        //                 var id = myPosts[index]["id"];
-        //                 Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(myPosts, index, id)));
-        //                 },
-        //               child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
-        //             )),
-        //         Padding(
-        //           padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 8.0),
-        //           child: Row(
-        //             mainAxisAlignment: MainAxisAlignment.start,
-        //             children: <Widget>[
-        //               Container(
-        //                 height: 40.0,
-        //                 width: 40.0,
-        //                 decoration: BoxDecoration(
-        //                   shape: BoxShape.circle,
-        //                   image: DecorationImage(
-        //                       fit: BoxFit.fill,
-        //                       image: checkValidCurrentProfileImage(index)),
-        //                 ),
-        //               ),
-        //               SizedBox(
-        //                 width: 10.0,
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //         Padding(
-        //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        //           child: Text(timeStamper(index),
-        //               style: TextStyle(color: Colors.grey)),
-        //         ),
-        //         Padding(padding: const EdgeInsets.symmetric(vertical: 5.0))
-        //       ],
-        //     );
-        //   },
-        // ),),
+          //                   ),onTap: () {
+          //                     //this is the video I was looking at: https://www.youtube.com/watch?v=EwHMSxSWIvQ
+          //                     var id = myPosts[index]["id"];
+          //                   },),
+          //                 ],
+          //               ),
+          //               IconButton(
+          //                 icon: Icon(Icons.more_vert),
+          //                 onPressed: null,
+          //               )
+          //             ],
+          //           ),
+          //         ),
+          //         Flexible(fit: FlexFit.loose, child: checkValidImage(index)),
+          //         Padding(
+          //           padding: const EdgeInsets.symmetric(horizontal: 5.25),
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             children: <Widget>[
+          //               Row(
+          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                 children: <Widget>[
+          //                   IconButton(
+          //                       icon: likeButtonCheck(index),
+          //                       onPressed: () {
+          //                         var id = myPosts[index]["id"];
+          //                         likeButtonTriggerPost(index, id);
+          //                         refreshData(context);
+          //                       }),
+          //                   SizedBox(
+          //                     width: 8.0,
+          //                   ),
+          //                   Icon(
+          //                     FontAwesomeIcons.comment,
+          //                   ),
+          //                   SizedBox(
+          //                     width: 16.0,
+          //                   ),
+          //                   IconButton(
+          //                   onPressed: (){
+
+          //                   },
+          //                   icon: Icon(FontAwesomeIcons.paperPlane,),
+          //                   )
+          //                 ],
+          //               ),
+          //               Padding(
+          //                   padding: EdgeInsets.only(right: 8.0),
+          //                   child: Icon(FontAwesomeIcons.bookmark))
+          //             ],
+          //           ),
+          //         ),
+          //         Padding(
+          //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          //             child: Text(
+          //               checkNumLikes(index),
+          //               style: TextStyle(fontSize: 15.0),
+          //             )),
+          //         Padding(
+          //           padding: const EdgeInsets.symmetric(vertical: 3.0),
+          //         ),
+          //         Padding(
+          //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          //             child: RichText(
+          //                 text: TextSpan(
+          //                     style: TextStyle(
+          //                       fontSize: 15.0,
+          //                       color: Colors.black,
+          //                     ),
+          //                     children: <TextSpan>[
+          //                   TextSpan(
+          //                       text: myPosts[index]["user_email"] + " ",
+          //                       style: TextStyle(fontWeight: FontWeight.bold)),
+          //                   TextSpan(text: myPosts[index]["caption"]),
+          //                 ]))),
+          //         Padding(
+          //             padding: const EdgeInsets.symmetric(
+          //                 horizontal: 16.0, vertical: 5),
+          //             child: GestureDetector(
+          //               onTap: (){
+          //                 refreshData(context);
+          //                 var id = myPosts[index]["id"];
+          //                 Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(myPosts, index, id)));
+          //                 },
+          //               child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
+          //             )),
+          //         Padding(
+          //           padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 8.0),
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.start,
+          //             children: <Widget>[
+          //               Container(
+          //                 height: 40.0,
+          //                 width: 40.0,
+          //                 decoration: BoxDecoration(
+          //                   shape: BoxShape.circle,
+          //                   image: DecorationImage(
+          //                       fit: BoxFit.fill,
+          //                       image: checkValidCurrentProfileImage(index)),
+          //                 ),
+          //               ),
+          //               SizedBox(
+          //                 width: 10.0,
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         Padding(
+          //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          //           child: Text(timeStamper(index),
+          //               style: TextStyle(color: Colors.grey)),
+          //         ),
+          //         Padding(padding: const EdgeInsets.symmetric(vertical: 5.0))
+          //       ],
+          //     );
+          //   },
+          // ),),
           Divider(height: 0.0),
           // buildUserPosts(),
         ],
