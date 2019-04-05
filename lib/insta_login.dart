@@ -41,7 +41,7 @@ class MyLoginPage extends StatelessWidget {
         "https://serene-beach-48273.herokuapp.com/api/login?username=$user&password=$pass";
     var response = await http.get(url);
     //var token = jsonDecode(response.body)["token"];
-    var token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozOH0.O8OntRw33JUf1Mma6DufJwekPb_fGuyjZYZXi-k5C7Q";
+    var token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozNH0.kZDXUlZ1urAhJCfWHwzUBGD9qpjapjq2cke1cnTl2jE";
     savedToken = token;
     return token;
   }
