@@ -25,6 +25,7 @@ class _InstaComments extends State<InstaComments> {
   var commentsList;
   int commentsCount;
   var commentCtrl = TextEditingController();
+  bool _btnEnabled = false;
   _InstaComments(this.posts, this.postindex, this.postid);
 
   @override
@@ -78,7 +79,7 @@ class _InstaComments extends State<InstaComments> {
         },
       );
     } else {
-      return null;
+      return Text("Nothing to see here.");
     }
   }
 
@@ -97,30 +98,81 @@ class _InstaComments extends State<InstaComments> {
     }
   }
 
+  timeStamper(commentindex) {
+    final currentDate = DateTime.now();
+    final postDate = DateTime.parse(commentsList[commentindex]["created_at"]);
+    final difference = currentDate.difference(postDate);
+    String inHours = difference.inHours.toString();
+    String inMin = difference.inMinutes.toString();
+    String inDays = difference.inDays.toString();
+    if (difference.inMinutes < 60) {
+      if (difference.inMinutes <= 1) return inMin + " m";
+      return inMin + " m";
+    } else if (difference.inHours < 24) {
+      if (difference.inHours <= 1) return inHours + " h";
+      return inHours + " h";
+    } else {
+      if (difference.inDays <= 1) return inDays + " d";
+      return inDays + " d";
+    }
+  }
+
+  void _showDialog(commentindex) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Please select an option:"),
+          content: Container(
+            child: (
+              Row(
+              children: <Widget>[
+                Container(
+                //  padding: const EdgeInsets.symmetric(),
+                  child: determineifusercomment2(commentindex),
+                ),
+                Container(
+                //  padding: const EdgeInsets.symmetric(),
+                  child: determineifusercomment(commentindex),
+                )
+              ],
+            )),
+          ),
+          actions: <Widget>[
+            FlatButton(child: Text("Close"), 
+            onPressed: (){
+              Navigator.of(context).pop();
+            },)
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xfff8faf8),
-        centerTitle: true,
-        elevation: 1.0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back),
+        appBar: AppBar(
+          backgroundColor: Color(0xfff8faf8),
+          centerTitle: true,
+          elevation: 1.0,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
+          title: Text("Comments", textAlign: TextAlign.left),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Icon(Icons.send),
+            )
+          ],
         ),
-        title: Text("Comments", textAlign: TextAlign.left),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Icon(Icons.send),
-          )
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
+        body: Column(children: <Widget>[
+          Flexible(
+            fit: FlexFit.tight,
             child: ListView.builder(
               reverse: true,
               itemCount: commentsCount = posts[postindex]["comments_count"],
@@ -132,7 +184,7 @@ class _InstaComments extends State<InstaComments> {
                     children: <Widget>[
                       Padding(
                           padding:
-                              const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 7.0),
+                              const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 2.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -148,71 +200,140 @@ class _InstaComments extends State<InstaComments> {
                                               ["profile_image_url"])),
                                 ),
                               ),
-                              Row(
-                                children: <Widget>[
-                                  Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
-                                      child: RichText(
+                              Expanded(
+                                child: Row(
+                                  children: <Widget>[
+                                    Flexible(
+                                      //padding: const EdgeInsets.only(
+                                      //  bottom: 20, left: 10),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 10.0, bottom: 15),
+                                        child: RichText(
                                           text: TextSpan(
                                               style: TextStyle(
-                                                fontSize: 11.0,
+                                                fontSize: 13.0,
                                                 color: Colors.black,
                                               ),
                                               children: <TextSpan>[
-                                            TextSpan(
-                                                text: commentsList[commentindex]
-                                                        ["user"]["email"] +
-                                                    " ",
-                                                style: TextStyle(
-                                                  fontSize: 9.5,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            TextSpan(
-                                                text: commentsList[commentindex]
-                                                    ["text"])
-                                          ]))),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(),
-                                    child:
-                                        determineifusercomment2(commentindex),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(),
-                                    child: determineifusercomment(commentindex),
-                                  )
-                                ],
+                                                TextSpan(
+                                                    text:
+                                                        commentsList[commentindex]
+                                                                    ["user"]
+                                                                ["email"] +
+                                                            " ",
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                TextSpan(
+                                                    text:
+                                                        commentsList[commentindex]
+                                                            ["text"]),
+                                              ]),
+                                        ),
+                                      ),
+                                    ),
+                                    
+                                      ],
+                                ),
                               ),
+                                 Container(
+                                  child: IconButton(
+                                      icon: Icon(Icons.more_vert),
+                                      onPressed: () {
+                                        _showDialog(commentindex);
+                                      }),
+                                      ), 
+                                      
                             ],
-                          )),
-                    ]);
+                          ),
+                          ),
+                //      Padding(
+                //   padding: const EdgeInsets.only(left: 67.0,bottom: 10),
+                //   child: Text(timeStamper(commentindex),
+                //       style: TextStyle(color: Colors.grey, fontSize: 11)),
+                // ),
+                  Container(
+                    padding: const EdgeInsets.only(right:215),
+                    child: Column(
+                    children: <Widget>[Text(timeStamper(commentindex),
+                        style: TextStyle(color: Colors.grey, fontSize: 11)),
+                    ]),
+                  )],
+                
+                    );
               },
             ),
           ),
-          Column(children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 5.0),
-              child: TextField(
-                controller: commentCtrl,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Add a comment...",
-                ),
-              ),
+          
+          Divider(height: 45.0),
+          Container(
+            padding: EdgeInsets.only(
+              left: 20,
             ),
-          ])
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(FontAwesomeIcons.commentDots),
-        mini: true,
-        onPressed: () {
-          setState(() {
-            postComment(postid);
-            getComments(postid);
-          });
-        },
-      ),
-    );
+            child: Row(
+              //      crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Stack(children: <Widget>[
+                  Container(
+                    width: 330,
+                    child: TextField(
+                      //       autofocus: true,
+                      onChanged: (commentCtrl) {
+                        if (commentCtrl.length >= 1) {
+                          setState(() {
+                            _btnEnabled = true;
+                          });
+                        } else {
+                          setState(() {
+                            _btnEnabled = false;
+                          });
+                        }
+                      },
+                      controller: commentCtrl,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(left: 15, top: 30),
+                        hintText: "Add a comment...",
+                        hintStyle:
+                            TextStyle(color: Colors.black.withOpacity(.4)),
+                        border: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(45))),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(45))),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -10,
+                    top: 2,
+                    child: MaterialButton(
+                      child: RichText(
+                          text: TextSpan(
+                              text: "Post",
+                              style: TextStyle(
+                                color: Colors.lightBlue.withOpacity(1),
+                                fontWeight: FontWeight.w600,
+                              ))),
+                      onPressed: () {
+                        _btnEnabled == true
+                            ? setState(() {
+                                postComment(postid);
+                                getComments(postid);
+                              })
+                            : null;
+                      },
+                    ),
+                  )
+                ])
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20),
+          )
+        ]));
   }
 }
