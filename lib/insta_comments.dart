@@ -10,31 +10,32 @@ import 'dart:async';
 class InstaComments extends StatefulWidget {
   List<dynamic> posts;
   int postindex;
-  int id;
-  InstaComments(this.posts, this.postindex, this.id);
+  int postid;
+  InstaComments(this.posts, this.postindex, this.postid);
   @override
   _InstaComments createState() =>
-      new _InstaComments(this.posts, this.postindex, this.id);
+      new _InstaComments(this.posts, this.postindex, this.postid);
 }
 
 class _InstaComments extends State<InstaComments> {
   List<dynamic> posts;
   int postindex;
-  int id;
+  int postid;
+  int commentid;
   var commentsList;
   int commentsCount;
   var commentCtrl = TextEditingController();
-  _InstaComments(this.posts, this.postindex, this.id);
+  _InstaComments(this.posts, this.postindex, this.postid);
 
   @override
   void initState() {
     super.initState();
-    getComments(id);
+    getComments(postid);
   }
 
-  getComments(id) async {
+  getComments(postid) async {
     var url =
-        "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/comments";
+        "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postid/comments";
     var response = await http.get(url,
         headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
     var _commentsList = jsonDecode(response.body);
@@ -43,12 +44,34 @@ class _InstaComments extends State<InstaComments> {
     });
   }
 
-  postComment(id) async {
+  postComment(postid) async {
     var comment = commentCtrl.text;
     var url =
-        "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/comments?text=$comment";
+        "https://serene-beach-48273.herokuapp.com/api/v1/posts/$postid/comments?text=$comment";
     http.post(url,
         headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
+  }
+
+  deleteComment(commentid) async {
+    var url =
+        "https://serene-beach-48273.herokuapp.com//api/v1/comments/$commentid";
+    http.delete(url,
+        headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
+  }
+
+  determineifusercomment(commentindex) {
+    if (commentsList[commentindex]["belongs_to_current_user"] == true) {
+      return IconButton(
+        icon: Icon(FontAwesomeIcons.trash),
+        onPressed: () {
+          commentid = commentsList[commentindex]["id"];
+          deleteComment(commentid);
+          getComments(postid);
+        },
+      );
+    } else {
+      return null;
+    }
   }
 
   @override
@@ -102,35 +125,44 @@ class _InstaComments extends State<InstaComments> {
                                               ["profile_image_url"])),
                                 ),
                               ),
-                              Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: RichText(
-                                      text: TextSpan(
-                                          style: TextStyle(
-                                            fontSize: 11.0,
-                                            color: Colors.black,
-                                          ),
-                                          children: <TextSpan>[
-                                        TextSpan(
-                                            text: commentsList[commentindex]
-                                                    ["user"]["email"] +
-                                                " ",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                        TextSpan(
-                                            text: commentsList[commentindex]
-                                                ["text"])
-                                      ]))),
+                              Row(
+                                children: <Widget>[
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: RichText(
+                                          text: TextSpan(
+                                              style: TextStyle(
+                                                fontSize: 11.0,
+                                                color: Colors.black,
+                                              ),
+                                              children: <TextSpan>[
+                                            TextSpan(
+                                                text: commentsList[commentindex]
+                                                        ["user"]["email"] +
+                                                    " ",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            TextSpan(
+                                                text: commentsList[commentindex]
+                                                    ["text"])
+                                          ]))),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(),
+                                    child: determineifusercomment(commentindex),
+                                  )
+                                ],
+                              ),
                             ],
-                          ))
+                          )),
                     ]);
               },
             ),
           ),
           Column(children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left:16.0,bottom: 5.0),
+              padding: const EdgeInsets.only(left: 16.0, bottom: 5.0),
               child: TextField(
                 controller: commentCtrl,
                 decoration: InputDecoration(
@@ -145,10 +177,10 @@ class _InstaComments extends State<InstaComments> {
       floatingActionButton: FloatingActionButton(
         child: Icon(FontAwesomeIcons.commentDots),
         mini: true,
-        onPressed: (){
+        onPressed: () {
           setState(() {
-           postComment(id);
-           getComments(id);
+            postComment(postid);
+            getComments(postid);
           });
         },
       ),
