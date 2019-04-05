@@ -59,6 +59,14 @@ class _InstaComments extends State<InstaComments> {
         headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
   }
 
+  editcomment(commentid) async {
+    var comment = commentCtrl.text;
+    var url =
+        "https://serene-beach-48273.herokuapp.com//api/v1/comments/$commentid?text=$comment";
+    http.patch(url,
+        headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
+  }
+
   determineifusercomment(commentindex) {
     if (commentsList[commentindex]["belongs_to_current_user"] == true) {
       return IconButton(
@@ -66,6 +74,21 @@ class _InstaComments extends State<InstaComments> {
         onPressed: () {
           commentid = commentsList[commentindex]["id"];
           deleteComment(commentid);
+          getComments(postid);
+        },
+      );
+    } else {
+      return null;
+    }
+  }
+
+  determineifusercomment2(commentindex) {
+    if (commentsList[commentindex]["belongs_to_current_user"] == true) {
+      return IconButton(
+        icon: Icon(FontAwesomeIcons.pencilAlt),
+        onPressed: () {
+          commentid = commentsList[commentindex]["id"];
+          editcomment(commentid);
           getComments(postid);
         },
       );
@@ -142,12 +165,18 @@ class _InstaComments extends State<InstaComments> {
                                                         ["user"]["email"] +
                                                     " ",
                                                 style: TextStyle(
+                                                  fontSize: 9.5,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             TextSpan(
                                                 text: commentsList[commentindex]
                                                     ["text"])
                                           ]))),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(),
+                                    child:
+                                        determineifusercomment2(commentindex),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(),
                                     child: determineifusercomment(commentindex),
