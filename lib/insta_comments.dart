@@ -25,6 +25,7 @@ class _InstaComments extends State<InstaComments> {
   var commentsList;
   int commentsCount;
   var commentCtrl = TextEditingController();
+  var editCommentCtrl = TextEditingController();
   bool _btnEnabled = false;
   _InstaComments(this.posts, this.postindex, this.postid);
 
@@ -61,7 +62,7 @@ class _InstaComments extends State<InstaComments> {
   }
 
   editcomment(commentid) async {
-    var comment = commentCtrl.text;
+    var comment = editCommentCtrl.text;
     var url =
         "https://serene-beach-48273.herokuapp.com//api/v1/comments/$commentid?text=$comment";
     http.patch(url,
@@ -70,13 +71,17 @@ class _InstaComments extends State<InstaComments> {
 
   determineifusercomment(commentindex) {
     if (commentsList[commentindex]["belongs_to_current_user"] == true) {
-      return IconButton(
-        icon: Icon(FontAwesomeIcons.trash),
-        onPressed: () {
-          commentid = commentsList[commentindex]["id"];
-          deleteComment(commentid);
-          getComments(postid);
-        },
+      return Container(
+        decoration: BoxDecoration(border: Border.all()),
+        child: MaterialButton(
+          child: Text("Delete comment"),
+          onPressed: () {
+            commentid = commentsList[commentindex]["id"];
+            deleteComment(commentid);
+            getComments(postid);
+            Navigator.of(context).pop();
+          },
+        ),
       );
     } else {
       return Text("Nothing to see here.");
@@ -85,15 +90,42 @@ class _InstaComments extends State<InstaComments> {
 
   determineifusercomment2(commentindex) {
     if (commentsList[commentindex]["belongs_to_current_user"] == true) {
-      return IconButton(
-        icon: Icon(FontAwesomeIcons.pencilAlt),
-        onPressed: () {
-          commentid = commentsList[commentindex]["id"];
-          editcomment(commentid);
-          getComments(postid);
-        },
+      return Column(
+        children: <Widget>[
+            Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          child: TextField(
+                            controller: editCommentCtrl,
+                            decoration: InputDecoration(
+                              hintText: "New comment...",
+                            border: OutlineInputBorder(),
+                            //EdgeInsets.only(left: 15, top: 30, right: 40),
+                      ))),
+                    ],
+                  ),
+                                    Padding(
+                    padding: EdgeInsets.only(top: 30),
+                  ),
+          Container(
+            decoration: BoxDecoration(border: Border.all()),
+            child: MaterialButton(
+              //  padding: const EdgeInsets.symmetric(),
+              child: Text("Edit comment"),
+            onPressed: (){
+            setState(() {
+            commentid = commentsList[commentindex]["id"];
+            editcomment(commentid);
+            getComments(postid);
+            Navigator.of(context).pop();
+            });
+            })
+          ),
+        ],
       );
-    } else {
+    }
+    else {
       return null;
     }
   }
@@ -121,29 +153,49 @@ class _InstaComments extends State<InstaComments> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Please select an option:"),
-          content: Container(
-            child: (
-              Row(
-              children: <Widget>[
-                Container(
-                //  padding: const EdgeInsets.symmetric(),
-                  child: determineifusercomment2(commentindex),
-                ),
-                Container(
-                //  padding: const EdgeInsets.symmetric(),
-                  child: determineifusercomment(commentindex),
-                )
-              ],
-            )),
+        return SingleChildScrollView(
+          child: AlertDialog(
+            //    contentPadding: EdgeInsets.only(bottom: 40, top: 100),
+            title: Text("Please select an option:"),
+            content: Container(
+              //  padding: EdgeInsets.only(bottom: 10, top: 40, left: 40, right: 40),
+              child: (Column(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                           Padding(
+                    padding: EdgeInsets.only(top: 20),
+                  ),
+                      Container(
+                        child: determineifusercomment2(commentindex)
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 100),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                   //   Container(child: Text("Delete comment")),
+                      Container(
+                        //  padding: const EdgeInsets.symmetric(),
+                        child: determineifusercomment(commentindex),
+                      ),
+                    ],
+                  )
+                ],
+              )),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
           ),
-          actions: <Widget>[
-            FlatButton(child: Text("Close"), 
-            onPressed: (){
-              Navigator.of(context).pop();
-            },)
-          ],
         );
       },
     );
@@ -166,7 +218,7 @@ class _InstaComments extends State<InstaComments> {
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
-              child: Icon(Icons.send),
+          //    child: Icon(Icons.send),
             )
           ],
         ),
@@ -178,94 +230,82 @@ class _InstaComments extends State<InstaComments> {
               itemCount: commentsCount = posts[postindex]["comments_count"],
               itemBuilder: (BuildContext context, int commentindex) {
                 return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 2.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                height: 40.0,
-                                width: 40.0,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image: NetworkImage(
-                                          commentsList[commentindex]["user"]
-                                              ["profile_image_url"])),
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: <Widget>[
-                                    Flexible(
-                                      //padding: const EdgeInsets.only(
-                                      //  bottom: 20, left: 10),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 10.0, bottom: 15),
-                                        child: RichText(
-                                          text: TextSpan(
-                                              style: TextStyle(
-                                                fontSize: 13.0,
-                                                color: Colors.black,
-                                              ),
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text:
-                                                        commentsList[commentindex]
-                                                                    ["user"]
-                                                                ["email"] +
-                                                            " ",
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                                TextSpan(
-                                                    text:
-                                                        commentsList[commentindex]
-                                                            ["text"]),
-                                              ]),
-                                        ),
-                                      ),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 2.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            height: 40.0,
+                            width: 40.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: NetworkImage(commentsList[commentindex]
+                                      ["user"]["profile_image_url"])),
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: <Widget>[
+                                Flexible(
+                                  //padding: const EdgeInsets.only(
+                                  //  bottom: 20, left: 10),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, bottom: 15),
+                                    child: RichText(
+                                      text: TextSpan(
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black,
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: commentsList[commentindex]
+                                                        ["user"]["email"] +
+                                                    " ",
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            TextSpan(
+                                                text: commentsList[commentindex]
+                                                    ["text"]),
+                                          ]),
                                     ),
-                                    
-                                      ],
+                                  ),
                                 ),
-                              ),
-                                 Container(
-                                  child: IconButton(
-                                      icon: Icon(Icons.more_vert),
-                                      onPressed: () {
-                                        _showDialog(commentindex);
-                                      }),
-                                      ), 
-                                      
-                            ],
+                              ],
+                            ),
                           ),
+                          Container(
+                            child: IconButton(
+                                icon: Icon(Icons.more_vert),
+                                onPressed: () {
+                                  _showDialog(commentindex);
+                                }),
                           ),
-                //      Padding(
-                //   padding: const EdgeInsets.only(left: 67.0,bottom: 10),
-                //   child: Text(timeStamper(commentindex),
-                //       style: TextStyle(color: Colors.grey, fontSize: 11)),
-                // ),
-                  Container(
-                    padding: const EdgeInsets.only(right:215),
-                    child: Column(
-                    children: <Widget>[Text(timeStamper(commentindex),
-                        style: TextStyle(color: Colors.grey, fontSize: 11)),
-                    ]),
-                  )],
-                
-                    );
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(right: 215),
+                      child: Column(children: <Widget>[
+                        Text(timeStamper(commentindex),
+                            style: TextStyle(color: Colors.grey, fontSize: 11)),
+                      ]),
+                    )
+                  ],
+                );
               },
             ),
           ),
-          
           Divider(height: 45.0),
           Container(
             padding: EdgeInsets.only(
@@ -318,12 +358,10 @@ class _InstaComments extends State<InstaComments> {
                                 fontWeight: FontWeight.w600,
                               ))),
                       onPressed: () {
-                        _btnEnabled == true
-                            ? setState(() {
+                            setState(() {
                                 postComment(postid);
                                 getComments(postid);
-                              })
-                            : null;
+                              });
                       },
                     ),
                   )
