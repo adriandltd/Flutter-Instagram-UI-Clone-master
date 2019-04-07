@@ -13,16 +13,18 @@ import 'package:flutter_insta_clone/insta_editprofile.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class InstaMyProfile extends StatefulWidget {
+  List<dynamic> posts;
   List<dynamic> myPosts;
   InstaMyProfile(this.myPosts);
 
-  _InstaMyProfile createState() => new _InstaMyProfile(this.myPosts);
+  _InstaMyProfile createState() => new _InstaMyProfile(this.posts, this.myPosts);
 }
 
 class _InstaMyProfile extends State<InstaMyProfile> {
+  List<dynamic> posts;
   List<dynamic> myPosts;
   Map<String, dynamic> myAccount;
-  _InstaMyProfile(this.myPosts);
+  _InstaMyProfile(this.posts,this.myPosts);
 
   int postsCount;
 
@@ -50,7 +52,7 @@ class _InstaMyProfile extends State<InstaMyProfile> {
 
     setState(() {
       this.myPosts = newmyPosts;
-      _InstaMyProfile(this.myPosts).build(context);
+      _InstaMyProfile(this.posts,this.myPosts).build(context);
     });
   }
 
@@ -171,7 +173,7 @@ class _InstaMyProfile extends State<InstaMyProfile> {
         ),
         backgroundColor: Colors.white,
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -236,163 +238,9 @@ class _InstaMyProfile extends State<InstaMyProfile> {
             ),
           ),
           Divider(),
-          //   RefreshIndicator(
-          // color: Colors.black,
-          // onRefresh: refreshList,
-          // key: refreshKey,
-          // child: ListView.builder(
-          //   itemCount: postsCount = myPosts.length,
-          //   itemBuilder: (BuildContext context, int index) {
-          //     return Column(
-          //       mainAxisAlignment: MainAxisAlignment.start,
-          //       mainAxisSize: MainAxisSize.min,
-          //       crossAxisAlignment: CrossAxisAlignment.stretch,
-          //       children: <Widget>[
-          //         Padding(
-          //           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 7.0),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Row(
-          //                 children: <Widget>[
-          //                   Container(
-          //                     height: 40.0,
-          //                     width: 40.0,
-          //                     decoration: BoxDecoration(
-          //                       shape: BoxShape.circle,
-          //                       image: DecorationImage(
-          //                           fit: BoxFit.fill,
-          //                           image: checkValidProfileImage(index)),
-          //                     ),
-          //                   ),
-          //                   SizedBox(
-          //                     width: 10.0,
-          //                   ),
-          //                   InkWell(child: Text(
-          //                     myPosts[index]["user_email"],
-          //                     style: TextStyle(fontWeight: FontWeight.bold),
 
-          //                   ),onTap: () {
-          //                     //this is the video I was looking at: https://www.youtube.com/watch?v=EwHMSxSWIvQ
-          //                     var id = myPosts[index]["id"];
-          //                   },),
-          //                 ],
-          //               ),
-          //               IconButton(
-          //                 icon: Icon(Icons.more_vert),
-          //                 onPressed: null,
-          //               )
-          //             ],
-          //           ),
-          //         ),
-          //         Flexible(fit: FlexFit.loose, child: checkValidImage(index)),
-          //         Padding(
-          //           padding: const EdgeInsets.symmetric(horizontal: 5.25),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Row(
-          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                 children: <Widget>[
-          //                   IconButton(
-          //                       icon: likeButtonCheck(index),
-          //                       onPressed: () {
-          //                         var id = myPosts[index]["id"];
-          //                         likeButtonTriggerPost(index, id);
-          //                         refreshData(context);
-          //                       }),
-          //                   SizedBox(
-          //                     width: 8.0,
-          //                   ),
-          //                   Icon(
-          //                     FontAwesomeIcons.comment,
-          //                   ),
-          //                   SizedBox(
-          //                     width: 16.0,
-          //                   ),
-          //                   IconButton(
-          //                   onPressed: (){
-
-          //                   },
-          //                   icon: Icon(FontAwesomeIcons.paperPlane,),
-          //                   )
-          //                 ],
-          //               ),
-          //               Padding(
-          //                   padding: EdgeInsets.only(right: 8.0),
-          //                   child: Icon(FontAwesomeIcons.bookmark))
-          //             ],
-          //           ),
-          //         ),
-          //         Padding(
-          //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          //             child: Text(
-          //               checkNumLikes(index),
-          //               style: TextStyle(fontSize: 15.0),
-          //             )),
-          //         Padding(
-          //           padding: const EdgeInsets.symmetric(vertical: 3.0),
-          //         ),
-          //         Padding(
-          //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          //             child: RichText(
-          //                 text: TextSpan(
-          //                     style: TextStyle(
-          //                       fontSize: 15.0,
-          //                       color: Colors.black,
-          //                     ),
-          //                     children: <TextSpan>[
-          //                   TextSpan(
-          //                       text: myPosts[index]["user_email"] + " ",
-          //                       style: TextStyle(fontWeight: FontWeight.bold)),
-          //                   TextSpan(text: myPosts[index]["caption"]),
-          //                 ]))),
-          //         Padding(
-          //             padding: const EdgeInsets.symmetric(
-          //                 horizontal: 16.0, vertical: 5),
-          //             child: GestureDetector(
-          //               onTap: (){
-          //                 refreshData(context);
-          //                 var id = myPosts[index]["id"];
-          //                 Navigator.push(context, MaterialPageRoute(builder: (context) => InstaComments(myPosts, index, id)));
-          //                 },
-          //               child: Text(checkNumComments(index), style: TextStyle(color: Colors.grey, fontSize: 14)),
-          //             )),
-          //         Padding(
-          //           padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 8.0),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.start,
-          //             children: <Widget>[
-          //               Container(
-          //                 height: 40.0,
-          //                 width: 40.0,
-          //                 decoration: BoxDecoration(
-          //                   shape: BoxShape.circle,
-          //                   image: DecorationImage(
-          //                       fit: BoxFit.fill,
-          //                       image: checkValidCurrentProfileImage(index)),
-          //                 ),
-          //               ),
-          //               SizedBox(
-          //                 width: 10.0,
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //         Padding(
-          //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          //           child: Text(timeStamper(index),
-          //               style: TextStyle(color: Colors.grey)),
-          //         ),
-          //         Padding(padding: const EdgeInsets.symmetric(vertical: 5.0))
-          //       ],
-          //     );
-          //   },
-          // ),),
-          Divider(height: 0.0),
-          // buildUserPosts(),
-        ],
-      ),
-    );
-  }
+          Expanded(child: InstaList(posts, myPosts,true)),
+            
+        ])
+  );}
 }

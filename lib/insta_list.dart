@@ -11,18 +11,28 @@ import 'dart:convert';
 class InstaList extends StatefulWidget {
   List<dynamic> posts;
   List<dynamic> myPosts;
-  InstaList(this.posts);
+  bool isUserPost;
+  InstaList(this.posts,this.myPosts,this.isUserPost);
   @override
-  _InstaList createState() => new _InstaList(this.posts);
+  _InstaList createState() {
+    if(isUserPost== true){
+      return new _InstaList(this.myPosts,true);
+    }
+    else{
+      return new _InstaList(this.posts,false);
+    }
+  }
+
 }
 
 class _InstaList extends State<InstaList> {
   List<dynamic> posts;
   List<dynamic> myPosts;
+  bool isUserPost;
   List<dynamic> userPosts;
   int postsCount;
 
-  _InstaList(this.posts);
+  _InstaList(this.posts,this.isUserPost);
 
   checkValidImage(index) {
     try {
@@ -93,9 +103,15 @@ class _InstaList extends State<InstaList> {
     var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
 
     setState(() {
-      this.posts = newPosts;
-      this.myPosts = newmyPosts;
-      _InstaList(this.posts).build(context);
+      if(isUserPost==false){
+        this.posts = newPosts;
+        this.myPosts = newmyPosts;
+        _InstaList(this.posts,false).build(context);}
+      else{
+        this.posts = newmyPosts;
+        this.myPosts = newmyPosts;
+        _InstaList(this.myPosts,true).build(context);
+      }
     });
   }
 
