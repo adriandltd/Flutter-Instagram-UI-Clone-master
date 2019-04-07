@@ -26,16 +26,18 @@ class _InstaUserProfile extends State<InstaUserProfile> {
   int userid;
   Map<String, dynamic> userAccount;
   _InstaUserProfile(this.userid);
+  var userPosts;
 
   int postsCount;
 
   @override
   void initState() {
     super.initState();
-    getUserAccount(context);
+    getUserAccount();
+    getUserPosts();
   }
 
-  Future<Map<String, dynamic>> getUserAccount(token) async {
+  Future<Map<String, dynamic>> getUserAccount() async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid";
 
     var response = await http.get(url,
@@ -44,7 +46,19 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     setState(() {
       userAccount = _userAccount;
     });
+  }
+
+  getUserPosts()async{
+    var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid/posts";
+
+    var response = await http.get(url,
+        headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"});
+    var _userPosts = jsonDecode(response.body);
+    setState(() {
+      userPosts = _userPosts;
+    });
     print("Response status: ${response.statusCode}");
+    print(userPosts.toString());
     return jsonDecode(response.body);
   }
 
@@ -58,7 +72,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
         ),
         backgroundColor: Colors.white,
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -109,6 +123,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
             ),
           ),
           Divider(),
+          Expanded(child: InstaList(userPosts, userPosts,true)),
           Divider(height: 0.0),
         ],
       ),
