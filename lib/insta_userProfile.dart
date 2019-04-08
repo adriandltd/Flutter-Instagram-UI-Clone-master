@@ -33,11 +33,11 @@ class _InstaUserProfile extends State<InstaUserProfile> {
   @override
   void initState() {
     super.initState();
-    getUserAccount();
-    getUserPosts();
+    getUserAccount(context);
+    getUserPosts(context);
   }
 
-  Future<Map<String, dynamic>> getUserAccount() async {
+  Future<Map<String, dynamic>> getUserAccount(token) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid";
 
     var response = await http.get(url,
@@ -46,9 +46,10 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     setState(() {
       userAccount = _userAccount;
     });
+    return jsonDecode(response.body);
   }
 
-  getUserPosts()async{
+  getUserPosts(token)async{
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid/posts";
 
     var response = await http.get(url,
@@ -66,10 +67,12 @@ class _InstaUserProfile extends State<InstaUserProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          userAccount["email"],
-          style: const TextStyle(color: Colors.black),
-        ),
+        title: RichText(
+          text: TextSpan(style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w700),children: <TextSpan>[ 
+          TextSpan(
+          text: userAccount["email"],
+          )]
+        )),
         backgroundColor: Colors.white,
       ),
       body: Column(
@@ -123,7 +126,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
             ),
           ),
           Divider(),
-          Expanded(child: InstaList(userPosts, userPosts,true)),
+          Expanded(child: InstaList(userPosts, userPosts,false)),
           Divider(height: 0.0),
         ],
       ),

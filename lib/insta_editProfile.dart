@@ -109,6 +109,7 @@ class _InstaEditProfile extends State<InstaEditProfile> {
                   child: Text("Update Profile Picture"),
                   onPressed: () {
                     uploadImage();
+                    Navigator.of(context).pop();
                   },
                 ),
               ),
@@ -149,6 +150,7 @@ class _InstaEditProfile extends State<InstaEditProfile> {
                   child: Text("Update Bio"),
                   onPressed: () {
                     upload(bioCtrl);
+                    Navigator.of(context).pop();
                   },
                 ),
               ),

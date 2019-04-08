@@ -10,38 +10,32 @@ import 'dart:async';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
 
-class InstaNewPost extends StatefulWidget {
-  InstaNewPost();
+class InstaEditPost extends StatefulWidget {
+  int postid;
+  InstaEditPost(this.postid);
 
-  _InstaNewPost createState() => new _InstaNewPost();
+  _InstaEditPost createState() => new _InstaEditPost(this.postid);
 }
 
-class _InstaNewPost extends State<InstaNewPost> {
+class _InstaEditPost extends State<InstaEditPost> {
+  int postid;
   var captionCtrl = TextEditingController();
-  File _image;
 
-  Future<Response> upload(TextEditingController caption) async {
+  _InstaEditPost(this.postid);
+
+  Future<Response> upload(TextEditingController caption, postid) async {
     FormData formData = new FormData.from(
         {
         "caption": caption.text, 
-        "image": new UploadFileInfo(_image, _image.path)
         });
-    var response = await Dio().post(
-      "http://serene-beach-48273.herokuapp.com/api/v1/posts",
+    var response = await Dio().patch(
+      "http://serene-beach-48273.herokuapp.com/api/v1/posts/$postid",
       data: formData,
       options: Options(
         headers: {HttpHeaders.authorizationHeader: "Bearer $savedToken"},
       ),
     );
     return response;
-  }
-
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      _image = image;
-    });
   }
 
   @override
@@ -60,7 +54,7 @@ class _InstaNewPost extends State<InstaNewPost> {
         title: RichText(
           text: TextSpan(style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),children: <TextSpan>[ 
           TextSpan(
-          text: "Create a Post",
+          text: "Edit Post",
           )]
         )),
         actions: <Widget>[
@@ -69,34 +63,15 @@ class _InstaNewPost extends State<InstaNewPost> {
       body: Container(
         child: Column(children: <Widget>[
           Padding(padding: EdgeInsets.only(top:30, bottom:30),),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                  "Please select your image:"),
-            ],
-          ),
           Padding(padding: EdgeInsets.all(10),),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                tooltip: "Press me to add an image from your camera roll",
-                icon: Icon(Icons.add_a_photo),
-                onPressed: () { 
-                  getImage();
-                },
-              ),
-            ],
-          ),
           Padding(padding: EdgeInsets.only(top:30, bottom:30),),              
           Row(            
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Please type a caption below:"),
+              Text("Please type your new caption below:"),
             ],
           ),          
-          Padding(padding: EdgeInsets.all(5),),              
+          Padding(padding: EdgeInsets.all(10),),              
           Row(            
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -105,7 +80,7 @@ class _InstaNewPost extends State<InstaNewPost> {
                   child: TextField(
                     controller: captionCtrl,
                     decoration: InputDecoration(
-                        hintText: "Caption",
+                        hintText: "New caption...",
                         contentPadding: EdgeInsets.all(15),
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder()),
@@ -121,9 +96,9 @@ class _InstaNewPost extends State<InstaNewPost> {
               Container(
                 decoration: BoxDecoration(border: Border.all()),
                 child: MaterialButton(
-                  child: Text("Post"),
+                  child: Text("Edit Caption"),
                   onPressed: () {
-                    upload(captionCtrl);
+                    upload(captionCtrl,postid);
                     Navigator.of(context).pop();
                   },
                 ),

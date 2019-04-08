@@ -5,6 +5,8 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
+import 'package:flutter_insta_clone/insta_myProfile.dart';
+import 'package:flutter_insta_clone/insta_editPost.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 
@@ -220,11 +222,19 @@ class _InstaList extends State<InstaList> {
                             ),
                             onTap: () {
                               var id = posts[index]["user_id"];
+                              if (id == myid )
+                              {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => InstaMyProfile(myPosts)));
+
+                              }
+                              else
+                              {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           InstaUserProfile(id)));
+                              }
                             },
                           ),
                         ],
@@ -289,7 +299,15 @@ class _InstaList extends State<InstaList> {
                       ),
                       Padding(
                           padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(FontAwesomeIcons.bookmark))
+                          child: IconButton(icon: Icon(Icons.info_outline),
+                          onPressed: (){
+                            var id = posts[index]["id"];
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            InstaEditPost(id)));
+                          },))
                     ],
                   ),
                 ),
@@ -304,21 +322,43 @@ class _InstaList extends State<InstaList> {
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: RichText(
-                        text: TextSpan(
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: Colors.black,
-                            ),
-                            children: <TextSpan>[
-                          TextSpan(
-                              text: posts[index]["user_email"] + " ",
+                    child: InkWell(
+                      child: RichText(
+                          text: TextSpan(
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 14)),
-                          TextSpan(
+                                fontSize: 15.0,
+                                color: Colors.black,
+                              ),
+                              children: <TextSpan>[
+                            TextSpan(
+                                text: posts[index]["user_email"] + " ",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 14)),
+                                    TextSpan(
                               text: posts[index]["caption"],
                               style: TextStyle(fontSize: 14)),
-                        ]))),
+                          ],
+                          ),
+                          ),
+                           onTap: () {
+                              var id = posts[index]["user_id"];
+                              if (id == myid )
+                              {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => InstaMyProfile(myPosts)));
+
+                              }
+                              else
+                              {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          InstaUserProfile(id)));
+                              }
+                            },
+                    ),
+                        ),
+               
                 Padding(
                     padding:
                         const EdgeInsets.only(top: 10, bottom: 5, left: 16),

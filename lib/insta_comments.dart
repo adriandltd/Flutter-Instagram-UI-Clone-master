@@ -214,7 +214,12 @@ class _InstaComments extends State<InstaComments> {
             },
             icon: Icon(Icons.arrow_back),
           ),
-          title: Text("Comments", textAlign: TextAlign.left),
+          title: RichText(
+          text: TextSpan(style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),children: <TextSpan>[ 
+          TextSpan(
+          text: "Comments",
+          )]
+        )),
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 12.0),

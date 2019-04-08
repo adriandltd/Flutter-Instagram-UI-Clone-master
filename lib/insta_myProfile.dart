@@ -12,6 +12,8 @@ import 'package:flutter_insta_clone/insta_comments.dart';
 import 'package:flutter_insta_clone/insta_editprofile.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+var myid;
+
 class InstaMyProfile extends StatefulWidget {
   List<dynamic> posts;
   List<dynamic> myPosts;
@@ -43,6 +45,11 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     setState(() {
       myAccount = _myAccount;
     });
+
+    var id = _myAccount["id"];
+
+    myid = id;
+    
     print("Response status: ${response.statusCode}");
     return jsonDecode(response.body);
   }
@@ -167,10 +174,12 @@ class _InstaMyProfile extends State<InstaMyProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          myAccount["email"],
-          style: const TextStyle(color: Colors.black),
-        ),
+        title: RichText(
+          text: TextSpan(style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w700),children: <TextSpan>[ 
+          TextSpan(
+          text: myAccount["email"],
+          )]
+        )),
         backgroundColor: Colors.white,
       ),
       body: Column(
