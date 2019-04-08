@@ -171,6 +171,12 @@ class _InstaList extends State<InstaList> {
     }
   }
 
+  int deterninePostLength(){
+      refreshData(context);
+      postsCount = posts.length;
+      return postsCount;
+  }
+
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   Future<Null> refreshList() async {
@@ -183,12 +189,13 @@ class _InstaList extends State<InstaList> {
   @override
   Widget build(BuildContext context) {
     //var deviceSize = MediaQuery.of(context).size;
+    refreshData(context);
     return RefreshIndicator(
         color: Colors.black,
         onRefresh: refreshList,
         key: refreshKey,
         child: ListView.builder(
-          itemCount: postsCount = posts.length,
+          itemCount: deterninePostLength(),
           itemBuilder: (BuildContext context, int index) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -233,7 +240,7 @@ class _InstaList extends State<InstaList> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          InstaUserProfile(id)));
+                                          InstaUserProfile(posts, id)));
                               }
                             },
                           ),
@@ -358,7 +365,7 @@ class _InstaList extends State<InstaList> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          InstaUserProfile(id)));
+                                          InstaUserProfile(posts, id)));
                               }
                             },
                     ),

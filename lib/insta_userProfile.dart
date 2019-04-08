@@ -17,15 +17,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class InstaUserProfile extends StatefulWidget {
   int userid;
   Map<String, dynamic> userAccount;
-  InstaUserProfile(this.userid);
+  List<dynamic> posts;
+  InstaUserProfile(this.posts, this.userid);
 
-  _InstaUserProfile createState() => new _InstaUserProfile(this.userid);
+  _InstaUserProfile createState() => new _InstaUserProfile(this.posts,this.userid);
 }
 
 class _InstaUserProfile extends State<InstaUserProfile> {
   int userid;
   Map<String, dynamic> userAccount;
-  _InstaUserProfile(this.userid);
+  List<dynamic> posts;
+  _InstaUserProfile(this.posts, this.userid);
   var userPosts;
 
   int postsCount;
@@ -35,9 +37,10 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     super.initState();
     getUserAccount(context);
     getUserPosts(context);
+    refreshData(context);
   }
 
-  Future<Map<String, dynamic>> getUserAccount(token) async {
+  getUserAccount(token) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid";
 
     var response = await http.get(url,
@@ -46,10 +49,9 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     setState(() {
       userAccount = _userAccount;
     });
-    return jsonDecode(response.body);
   }
 
-  Future <List<dynamic>> getUserPosts(token)async{
+  getUserPosts(token)async{
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid/posts";
 
     var response = await http.get(url,
@@ -59,10 +61,24 @@ class _InstaUserProfile extends State<InstaUserProfile> {
       userPosts = _userPosts;
     });
     print("Response status: ${response.statusCode}");
-    print(userPosts.toString());
-    return jsonDecode(response.body);
+    print(userPosts);
   }
+  refreshData(context) async {
+    var newUserPosts = await MyLoginPage().getMyPosts(savedToken);
 
+    setState(() {
+      this.userPosts = newUserPosts;
+      _InstaUserProfile(userPosts, this.userid).build(context);
+    });
+  }
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  Future<Null> refreshList() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 2));
+    refreshData(context);
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +142,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
             ),
           ),
           Divider(),
-          Expanded(child: InstaList(userPosts, userPosts,false)),
+          Expanded(child: InstaList(posts, userPosts,true)),
           Divider(height: 0.0),
         ],
       ),
