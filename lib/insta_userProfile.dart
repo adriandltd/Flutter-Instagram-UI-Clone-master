@@ -19,6 +19,7 @@ class InstaUserProfile extends StatefulWidget {
   Map<String, dynamic> userAccount;
   List<dynamic> posts;
   InstaUserProfile(this.posts, this.userid);
+  
 
   _InstaUserProfile createState() => new _InstaUserProfile(this.posts,this.userid);
 }
@@ -32,15 +33,15 @@ class _InstaUserProfile extends State<InstaUserProfile> {
 
   int postsCount;
 
+
   @override
   void initState() {
     super.initState();
-    getUserAccount(context);
-    getUserPosts(context);
-    refreshData(context);
+    getUserAccount();
+    getUserPosts();
   }
 
-  getUserAccount(token) async {
+  getUserAccount() async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid";
 
     var response = await http.get(url,
@@ -51,7 +52,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     });
   }
 
-  getUserPosts(token)async{
+  getUserPosts()async{
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid/posts";
 
     var response = await http.get(url,
@@ -60,9 +61,8 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     setState(() {
       userPosts = _userPosts;
     });
-    print("Response status: ${response.statusCode}");
-    print(userPosts);
   }
+
   refreshData(context) async {
     var newUserPosts = await MyLoginPage().getMyPosts(savedToken);
 
@@ -71,14 +71,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
       _InstaUserProfile(userPosts, this.userid).build(context);
     });
   }
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
-  Future<Null> refreshList() async {
-    refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds: 2));
-    refreshData(context);
-    return null;
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +135,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
             ),
           ),
           Divider(),
-          Expanded(child: InstaList(posts, userPosts,true)),
+          Expanded(child: InstaList(posts, null, userPosts, true, false)),
           Divider(height: 0.0),
         ],
       ),

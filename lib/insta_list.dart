@@ -11,30 +11,47 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 
 class InstaList extends StatefulWidget {
-  List<dynamic> posts;
+  List<dynamic> allposts;
   List<dynamic> myPosts;
+  List<dynamic> userPosts;
   bool isUserPost;
-  InstaList(this.posts,this.myPosts,this.isUserPost);
+  bool isMyPost;
+  InstaList(this.allposts, this.myPosts, this.userPosts, this.isUserPost,
+      this.isMyPost);
   @override
   _InstaList createState() {
-    if(isUserPost== true){
-      return new _InstaList(this.myPosts,true);
-    }
-    else{
-      return new _InstaList(this.posts,false);
+    if (isUserPost == true && isMyPost == false) {
+      return new _InstaList(this.userPosts, this.allposts, this.myPosts,
+          this.userPosts, true, false);
+    } else if (isUserPost == false && isMyPost == true) {
+      return new _InstaList(this.myPosts, this.allposts, this.myPosts,
+          this.userPosts, false, true);
+    } else if (isUserPost == false && isMyPost == false) {
+      return new _InstaList(this.allposts, this.allposts, this.myPosts,
+          this.userPosts, false, false);
     }
   }
-
 }
 
 class _InstaList extends State<InstaList> {
   List<dynamic> posts;
+  List<dynamic> allposts;
   List<dynamic> myPosts;
-  bool isUserPost;
   List<dynamic> userPosts;
+  bool isUserPost;
+  bool isMyPost;
   int postsCount;
+  int userid;
+  Map<String, dynamic> userAccount;
 
-  _InstaList(this.posts,this.isUserPost);
+  @override
+  void initState() {
+    super.initState();
+    refreshData(context);
+  }
+
+  _InstaList(this.posts, this.allposts, this.myPosts, this.userPosts,
+      this.isUserPost, this.isMyPost);
 
   checkValidImage(index) {
     try {
@@ -95,24 +112,32 @@ class _InstaList extends State<InstaList> {
 
     var response = await http
         .get(url, headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
-    print("Response status: ${response.statusCode}");
-    print(jsonDecode(response.body).length);
+    //print("Response status: ${response.statusCode}");
     return jsonDecode(response.body);
   }
 
   refreshData(context) async {
     var newPosts = await MyLoginPage().getPosts(savedToken);
     var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
-
     setState(() {
-      if(isUserPost==false){
+      if (isUserPost == false && isMyPost == false) {
         this.posts = newPosts;
         this.myPosts = newmyPosts;
-        _InstaList(this.posts,false).build(context);}
-      else{
+        _InstaList(this.allposts, this.allposts, this.myPosts, this.userPosts,
+                false, false)
+            .build(context);
+      } else if (isUserPost == true && isMyPost == false) {
+        this.posts = userPosts;
+        this.myPosts = newmyPosts;
+        _InstaList(this.userPosts, this.allposts, this.myPosts, this.userPosts,
+                true, false)
+            .build(context);
+      } else if (isUserPost == false && isMyPost == true) {
         this.posts = newmyPosts;
         this.myPosts = newmyPosts;
-        _InstaList(this.myPosts,true).build(context);
+        _InstaList(this.myPosts, this.allposts, this.myPosts, this.userPosts,
+                true, false)
+            .build(context);
       }
     });
   }
@@ -136,9 +161,11 @@ class _InstaList extends State<InstaList> {
     if (posts[index]["likes_count"] == 0)
       return null;
     else if (posts[index]["likes_count"] == 1)
-      return Text((posts[index]["likes_count"].toString() + " like"),   style: TextStyle(fontSize: 15.0));
+      return Text((posts[index]["likes_count"].toString() + " like"),
+          style: TextStyle(fontSize: 15.0));
     else
-      return Text((posts[index]["likes_count"].toString() + " likes"),   style: TextStyle(fontSize: 15.0));
+      return Text((posts[index]["likes_count"].toString() + " likes"),
+          style: TextStyle(fontSize: 15.0));
   }
 
   checkNumComments(index) {
@@ -171,10 +198,17 @@ class _InstaList extends State<InstaList> {
     }
   }
 
-  int deterninePostLength(){
-      refreshData(context);
+  int deterninePostLength() {
+    refreshData(context);
+    if (isUserPost == false && isMyPost == false) {
       postsCount = posts.length;
-      return postsCount;
+    } else if (isUserPost == true && isMyPost == false) {
+      postsCount = userPosts.length;
+    } else if (isUserPost == false && isMyPost == true) {
+      postsCount = myPosts.length;
+    }
+    print("The length of UserPosts is: " + postsCount.toString());
+    return postsCount;
   }
 
   var refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -189,7 +223,6 @@ class _InstaList extends State<InstaList> {
   @override
   Widget build(BuildContext context) {
     //var deviceSize = MediaQuery.of(context).size;
-    refreshData(context);
     return RefreshIndicator(
         color: Colors.black,
         onRefresh: refreshList,
@@ -228,19 +261,19 @@ class _InstaList extends State<InstaList> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             onTap: () {
-                              var id = posts[index]["user_id"];
-                              if (id == myid )
-                              {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => InstaMyProfile(myPosts)));
-
-                              }
-                              else
-                              {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          InstaUserProfile(posts, id)));
+                              userid = posts[index]["user_id"];
+                              if (userid == myid) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            InstaMyProfile(myPosts)));
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            InstaUserProfile(posts, userid)));
                               }
                             },
                           ),
@@ -307,70 +340,66 @@ class _InstaList extends State<InstaList> {
                       ),
                       Padding(
                           padding: EdgeInsets.only(right: 8.0),
-                          child: IconButton(icon: Icon(Icons.info_outline),
-                          onPressed: (){
-                            var id = posts[index]["id"];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            InstaEditPost(id)));
-                          },))
+                          child: IconButton(
+                            icon: Icon(Icons.info_outline),
+                            onPressed: () {
+                              var id = posts[index]["id"];
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => InstaEditPost(id)));
+                            },
+                          ))
                     ],
                   ),
                 ),
                 InkWell(
-                      child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child:
-                        checkNumLikes(index),
-                      ),
-                      onTap: (){
-                        
-                      },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: checkNumLikes(index),
+                  ),
+                  onTap: () {},
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 3.0),
                 ),
                 Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: InkWell(
-                      child: RichText(
-                          text: TextSpan(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: InkWell(
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: posts[index]["user_email"] + " ",
                               style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.black,
-                              ),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: posts[index]["user_email"] + " ",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 14)),
-                                    TextSpan(
+                                  fontWeight: FontWeight.w600, fontSize: 14)),
+                          TextSpan(
                               text: posts[index]["caption"],
                               style: TextStyle(fontSize: 14)),
-                          ],
-                          ),
-                          ),
-                           onTap: () {
-                              var id = posts[index]["user_id"];
-                              if (id == myid )
-                              {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => InstaMyProfile(myPosts)));
-
-                              }
-                              else
-                              {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          InstaUserProfile(posts, id)));
-                              }
-                            },
+                        ],
+                      ),
                     ),
-                        ),
-               
+                    onTap: () {
+                      var id = posts[index]["user_id"];
+                      if (id == myid) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => InstaMyProfile(myPosts)));
+                      } else {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    InstaUserProfile(posts, id)));
+                      }
+                    },
+                  ),
+                ),
                 Padding(
                     padding:
                         const EdgeInsets.only(top: 10, bottom: 5, left: 16),

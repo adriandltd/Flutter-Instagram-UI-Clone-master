@@ -54,122 +54,6 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     return jsonDecode(response.body);
   }
 
-  refreshData(context) async {
-    var newmyPosts = await MyLoginPage().getMyPosts(savedToken);
-
-    setState(() {
-      this.myPosts = newmyPosts;
-      _InstaMyProfile(this.posts,this.myPosts).build(context);
-    });
-  }
-
-  checkValidProfileImage(index) {
-    try {
-      return NetworkImage(myPosts[index]["user_profile_image_url"]);
-    } catch (e) {
-      return AssetImage('assets/images/empty-profile.png');
-    }
-  }
-
-  checkValidImage(index) {
-    try {
-      return Image.network(myPosts[index]["image_url"]);
-    } catch (e) {
-      return Image.asset('assets/images/empty-photo.jpg');
-    }
-  }
-
-  checkValidCurrentProfileImage(index) {
-    try {
-      return NetworkImage(myPosts[index]["user_profile_image_url"]);
-    } catch (e) {
-      return AssetImage('assets/images/empty-profile.png');
-    }
-  }
-
-  likeButtonCheck(index) {
-    if (myPosts[index]["liked"] == false)
-      return Icon(
-        FontAwesomeIcons.heart,
-        color: Colors.black,
-      );
-    else
-      return Icon(
-        FontAwesomeIcons.solidHeart,
-        color: Colors.red,
-      );
-  }
-
-  Future<void> likeButtonTriggerPost(index, id) async {
-    if (myPosts[index]["liked"] == false) {
-      var token = savedToken;
-      var url =
-          "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
-      print("liked post " + id.toString());
-      var request = await http.post(url,
-          headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
-      print("Response status: ${request.statusCode}");
-    } else {
-      var token = savedToken;
-      var url =
-          "https://serene-beach-48273.herokuapp.com/api/v1/posts/$id/likes";
-      print("unliked post " + id.toString());
-      var request = await http.delete(url,
-          headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
-      print("Response status: ${request.statusCode}");
-    }
-  }
-
-  checkNumLikes(index) {
-    if (myPosts[index]["likes_count"] == 0)
-      return " ";
-    else if (myPosts[index]["likes_count"] == 1)
-      return (myPosts[index]["likes_count"].toString() + " like");
-    else
-      return (myPosts[index]["likes_count"].toString() + " likes");
-  }
-
-  checkNumComments(index) {
-    if (myPosts[index]["comments_count"] == 0)
-      return " ";
-    else if (myPosts[index]["comments_count"] == 1)
-      return ("View " +
-          myPosts[index]["comments_count"].toString() +
-          " comment");
-    else
-      return ("View all " +
-          myPosts[index]["comments_count"].toString() +
-          " comments");
-  }
-
-  timeStamper(index) {
-    final currentDate = DateTime.now();
-    final postDate = DateTime.parse(myPosts[index]["created_at"]);
-    final difference = currentDate.difference(postDate);
-    String inHours = difference.inHours.toString();
-    String inMin = difference.inMinutes.toString();
-    String inDays = difference.inDays.toString();
-    if (difference.inMinutes < 60) {
-      if (difference.inMinutes <= 1) return inMin + " minute ago";
-      return inMin + " minutes ago";
-    } else if (difference.inHours < 24) {
-      if (difference.inHours <= 1) return inHours + " hour ago";
-      return inHours + " hours ago";
-    } else {
-      if (difference.inDays <= 1) return inDays + " day ago";
-      return inDays + " days ago";
-    }
-  }
-
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
-
-  Future<Null> refreshList() async {
-    refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds: 2));
-    refreshData(context);
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -248,7 +132,7 @@ class _InstaMyProfile extends State<InstaMyProfile> {
           ),
           Divider(),
 
-          Expanded(child: InstaList(posts, myPosts,true)),
+          Expanded(child: InstaList(posts, myPosts, null,false, true)),
             
         ])
   );}
