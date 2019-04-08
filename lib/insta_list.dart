@@ -134,11 +134,11 @@ class _InstaList extends State<InstaList> {
 
   checkNumLikes(index) {
     if (posts[index]["likes_count"] == 0)
-      return " ";
+      return null;
     else if (posts[index]["likes_count"] == 1)
-      return (posts[index]["likes_count"].toString() + " like");
+      return Text((posts[index]["likes_count"].toString() + " like"),   style: TextStyle(fontSize: 15.0));
     else
-      return (posts[index]["likes_count"].toString() + " likes");
+      return Text((posts[index]["likes_count"].toString() + " likes"),   style: TextStyle(fontSize: 15.0));
   }
 
   checkNumComments(index) {
@@ -273,6 +273,7 @@ class _InstaList extends State<InstaList> {
                                 var id = posts[index]["id"];
                                 likeButtonTriggerPost(index, id);
                                 refreshData(context);
+                                refreshList();
                               }),
                           Padding(
                             padding: const EdgeInsets.only(),
@@ -311,12 +312,16 @@ class _InstaList extends State<InstaList> {
                     ],
                   ),
                 ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      checkNumLikes(index),
-                      style: TextStyle(fontSize: 15.0),
-                    )),
+                InkWell(
+                      child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child:
+                        checkNumLikes(index),
+                      ),
+                      onTap: (){
+                        
+                      },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 3.0),
                 ),

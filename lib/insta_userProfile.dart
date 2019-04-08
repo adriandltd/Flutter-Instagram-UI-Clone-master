@@ -49,7 +49,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     return jsonDecode(response.body);
   }
 
-  getUserPosts(token)async{
+  Future <List<dynamic>> getUserPosts(token)async{
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid/posts";
 
     var response = await http.get(url,
