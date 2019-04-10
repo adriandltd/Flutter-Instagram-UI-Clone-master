@@ -26,7 +26,20 @@ class _InstaUserProfile extends State<InstaUserProfile> {
   void initState() {
     super.initState();
     getUserAccount(userid);
-    for (int i = 0;i<3;i++){
+    bool loaded = false;
+    FutureBuilder<dynamic>(
+  future: getUserPosts(userid),
+  builder: (context, snapshot) {
+
+    if (snapshot.hasData) {
+      loaded=true;
+    }
+    if (snapshot.hasError) {
+      loaded=false;
+    return new Center(child: new CircularProgressIndicator());
+  }}
+    );
+    for (int i = 0;i<10;i++){
     getUserPosts(userid);
     }
     print("The length of UserPosts is: " + postsCount.toString());
