@@ -101,12 +101,9 @@ class InstaHome extends StatelessWidget {
                   icon: Icon(
                     Icons.account_box,
                   ),
-                  onPressed: () async{
+                  onPressed: (){
                   //  refreshDataProfile(context);
                    // InstaMyProfile().getData(savedToken);
-                  
-                  Future.delayed(Duration(seconds:10));
-                  CircularProgressIndicator();
                   Navigator.push(context, MaterialPageRoute(builder: (context) => InstaMyProfile(myPosts)));
 
                   }

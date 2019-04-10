@@ -84,7 +84,7 @@ class _InstaComments extends State<InstaComments> {
         ),
       );
     } else {
-      return Text("This isn't my comment.", style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600));
+      return Text("Nothing to see here.");
     }
   }
 
@@ -153,49 +153,48 @@ class _InstaComments extends State<InstaComments> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Center(
-          child: SingleChildScrollView(
-            child: AlertDialog(
-              //    contentPadding: EdgeInsets.only(bottom: 40, top: 100),
-              content: Container(
-                //  padding: EdgeInsets.only(bottom: 10, top: 40, left: 40, right: 40),
-                child: (Column(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                             Padding(
-                      padding: EdgeInsets.only(top: 20),
-                    ),
-                        Container(
-                          child: determineifusercomment2(commentindex)
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 100),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                     //   Container(child: Text("Delete comment")),
-                        Container(
-                          //  padding: const EdgeInsets.symmetric(),
-                          child: determineifusercomment(commentindex),
-                        ),
-                      ],
-                    )
-                  ],
-                )),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Close"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
+        return SingleChildScrollView(
+          child: AlertDialog(
+            //    contentPadding: EdgeInsets.only(bottom: 40, top: 100),
+            title: Text("Please select an option:"),
+            content: Container(
+              //  padding: EdgeInsets.only(bottom: 10, top: 40, left: 40, right: 40),
+              child: (Column(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                           Padding(
+                    padding: EdgeInsets.only(top: 20),
+                  ),
+                      Container(
+                        child: determineifusercomment2(commentindex)
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 100),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                   //   Container(child: Text("Delete comment")),
+                      Container(
+                        //  padding: const EdgeInsets.symmetric(),
+                        child: determineifusercomment(commentindex),
+                      ),
+                    ],
+                  )
+                ],
+              )),
             ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
           ),
         );
       },

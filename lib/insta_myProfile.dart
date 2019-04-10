@@ -54,22 +54,6 @@ class _InstaMyProfile extends State<InstaMyProfile> {
     return jsonDecode(response.body);
   }
 
-     Widget futureWidget() {
-    return new FutureBuilder<Map<String,dynamic>>(
-      future: getMyAccount(savedToken),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Expanded(child: InstaList(posts, myPosts, null,false, true));
-
-        } else if (snapshot.hasError) {
-          return new Text("${snapshot.error}");
-        }
-
-        return new CircularProgressIndicator();
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,7 +131,9 @@ class _InstaMyProfile extends State<InstaMyProfile> {
             ),
           ),
           Divider(),
-          futureWidget(),            
+
+          Expanded(child: InstaList(posts, myPosts, null,false, true)),
+            
         ])
   );}
 }
