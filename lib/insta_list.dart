@@ -366,12 +366,12 @@ class _InstaList extends State<InstaList> {
                           child: IconButton(
                             icon: Icon(Icons.info_outline),
                             onPressed: () {
-                              if (isMyPost == true){
-                              var id = posts[index]["id"];
+                              var userid = posts[index]["user_id"];
+                              if ( userid == myid){
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => InstaEditPost(id)));
+                                      builder: (context) => InstaEditPost(myid)));
                               }
                               else
                               {
