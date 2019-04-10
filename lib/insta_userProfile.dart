@@ -3,45 +3,50 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_insta_clone/insta_login.dart';
-import 'package:flutter_insta_clone/insta_home.dart';
 import 'package:flutter_insta_clone/insta_list.dart';
-import 'package:flutter_insta_clone/insta_comments.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-
 
 
 class InstaUserProfile extends StatefulWidget {
   int userid;
   Map<String, dynamic> userAccount;
-  List<dynamic> posts;
-  InstaUserProfile(this.posts, this.userid);
-  
+  InstaUserProfile(this.userid);
 
-  _InstaUserProfile createState() => new _InstaUserProfile(this.posts,this.userid);
+  _InstaUserProfile createState() => new _InstaUserProfile(this.userid);
 }
 
 class _InstaUserProfile extends State<InstaUserProfile> {
   int userid;
   Map<String, dynamic> userAccount;
-  List<dynamic> posts;
-  _InstaUserProfile(this.posts, this.userid);
+  _InstaUserProfile(this.userid);
   var userPosts;
-
   int postsCount;
-
 
   @override
   void initState() {
     super.initState();
-    getUserAccount();
-    getUserPosts();
+    getUserAccount(userid);
+    bool loaded = false;
+    FutureBuilder<dynamic>(
+  future: getUserPosts(userid),
+  builder: (context, snapshot) {
+
+    if (snapshot.hasData) {
+      loaded=true;
+    }
+    if (snapshot.hasError) {
+      loaded=false;
+    return new Center(child: new CircularProgressIndicator());
+  }}
+    );
+    for (int i = 0;i<10;i++){
+    getUserPosts(userid);
+    }
+    print("The length of UserPosts is: " + postsCount.toString());
   }
 
-  getUserAccount() async {
+
+  getUserAccount(userid) async {
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid";
 
     var response = await http.get(url,
@@ -52,7 +57,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     });
   }
 
-  getUserPosts()async{
+  getUserPosts(userid)async{
     var url = "https://serene-beach-48273.herokuapp.com/api/v1/users/$userid/posts";
 
     var response = await http.get(url,
@@ -68,12 +73,14 @@ class _InstaUserProfile extends State<InstaUserProfile> {
 
     setState(() {
       this.userPosts = newUserPosts;
-      _InstaUserProfile(userPosts, this.userid).build(context);
+      _InstaUserProfile(this.userid).build(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    getUserAccount(userid);
+    getUserPosts(userid);
     return Scaffold(
       appBar: AppBar(
         title: RichText(
@@ -135,7 +142,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
             ),
           ),
           Divider(),
-          Expanded(child: InstaList(posts, null, userPosts, true, false)),
+          Expanded(child: InstaList(null, null, this.userPosts, true, false)),
           Divider(height: 0.0),
         ],
       ),

@@ -207,7 +207,6 @@ class _InstaList extends State<InstaList> {
     } else if (isUserPost == false && isMyPost == true) {
       postsCount = myPosts.length;
     }
-    print("The length of UserPosts is: " + postsCount.toString());
     return postsCount;
   }
 
@@ -273,7 +272,7 @@ class _InstaList extends State<InstaList> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            InstaUserProfile(posts, userid)));
+                                            InstaUserProfile(userid)));
                               }
                             },
                           ),
@@ -395,7 +394,7 @@ class _InstaList extends State<InstaList> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    InstaUserProfile(posts, id)));
+                                    InstaUserProfile(id)));
                       }
                     },
                   ),
