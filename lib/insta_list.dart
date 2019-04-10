@@ -210,6 +210,30 @@ class _InstaList extends State<InstaList> {
     return postsCount;
   }
 
+  void _showDialog(index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+              //    contentPadding: EdgeInsets.only(bottom: 40, top: 100),
+              title: Center(child: Text("This isn't my post.")),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   Future<Null> refreshList() async {
@@ -342,11 +366,17 @@ class _InstaList extends State<InstaList> {
                           child: IconButton(
                             icon: Icon(Icons.info_outline),
                             onPressed: () {
+                              if (isMyPost == true){
                               var id = posts[index]["id"];
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => InstaEditPost(id)));
+                              }
+                              else
+                              {
+                                _showDialog(index);
+                              }
                             },
                           ))
                     ],

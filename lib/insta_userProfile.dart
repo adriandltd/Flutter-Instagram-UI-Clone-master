@@ -66,6 +66,7 @@ class _InstaUserProfile extends State<InstaUserProfile> {
     setState(() {
       userPosts = _userPosts;
     });
+    return _userPosts;
   }
 
   refreshData(context) async {
@@ -143,7 +144,6 @@ class _InstaUserProfile extends State<InstaUserProfile> {
           ),
           Divider(),
           Expanded(child: InstaList(null, null, this.userPosts, true, false)),
-          Divider(height: 0.0),
         ],
       ),
     );
